@@ -59,17 +59,11 @@ def decode_edge(text):
     return edge1, edge2, weight
 
 
-def find_node(sel, nodes):
-    node = (None,)
-    tel = 0
-    while node == None:
-        if nodes[tel] == sel:
-            sel = nodes[tel]
-        tel += 1
-    return node
-
-
 def _add_edges(routes, i):
+    # Add edge to last node in route
+    # Input:  routes => list of routes
+    #           i => route to add edges an
+    # output: list of routes
     node = routes[i][0][-1]
     # tempcopy = copy.deepcopy(routes[i])  # copie to start alternative route
     for j in range(len(node.edgeout)):
@@ -83,11 +77,24 @@ def _add_edges(routes, i):
     return routes
 
 
+def checknodesinroute(route):
+    # Check if last node in route already exists route
+    # Input: Route-object
+    # Output:  Bool
+    checknode = route[0][-1]
+    result = False
+    for elem in route[0][:-1]:
+        if elem == checknode:
+            result = True
+    return result
+
+
 def routing(beginnode, endnode, nodes):
+    # Make possible and impossible routes based on beginnode, endnode and collection of nodes
     # Input:
-    #   beginnode: beginning node
-    #   endnode: endnode
-    #   nodes: collection of nodes.
+    #   beginnode: beginning node (Node-object)
+    #   endnode: endnode           (Node-object)
+    #   nodes: collection of nodes. list of nodes
 
     # Output:
     # routes list of lists
@@ -98,16 +105,25 @@ def routing(beginnode, endnode, nodes):
     routes = []
     routes.append([[beginnode], False])
     i = 0  # Route teller
-    for a in range(10):
+    # for a in range(10):
+    while i <= len(routes) - 1:
         if type(routes[i][0][-1]) is Edge:
             node = routes[i][0][-1].find_node(nodes, "in")
             routes[i][0].append(node)
+            if node == endnode:
+                routes[i][1] = True  # end of route at destination
+                i += 1
+                continue
+
         routes = _add_edges(routes, i)
         edgein = routes[i][0][-1]
         nodein = edgein.find_node(nodes, "in")
+        print(i)
         print(nodein)
         routes[i][0].append(nodein)
 
+        if checknodesinroute(routes[i]):
+            routes[i][1] = True  # ends not at destination
         if nodein == endnode:
             routes[i][1] = True  # end of route at destination
 
@@ -116,6 +132,8 @@ def routing(beginnode, endnode, nodes):
         if len(routes) == i:
             print(i)
             break
+        if i == 10:
+            break  # emergency break
     # for in e_out in node.edgeout:
     #    routes[0].append(node.edgeout[0])
 
@@ -143,6 +161,9 @@ def routing(beginnode, endnode, nodes):
 
 
 def make_nodescoll(edgedefs):
+    # make colllection (list) of Node-objects.
+    # input: edgedefs=> list of strings containing 3 characters.
+    # output: list of Nodeobjects.
     nodescoll = []
 
     nodesnames = []
@@ -158,17 +179,6 @@ def make_nodescoll(edgedefs):
     for temp in edgedefs:
         dump = decode_edge(temp)
         e_1 = Edge(dump[0] + dump[1], dump[2])
-        # dump = decode_edge(routes[1])
-        # e_2 = Edge(dump[0] + dump[1], dump[2])
-        # if len(nodescoll) == 0:
-        # n1 = Node(dump[0])
-        # n1.add_edgeout(e_1)
-        # nodescoll.append(n1)
-        # n2 = Node(dump[1])
-        # n2.add_edgeout(e_1)
-        # nodescoll.append(n2)
-        # nodescoll.append(Node(dump[1]))
-        # else:
         for i, no in enumerate(nodescoll):
             if no.name == dump[0]:
                 no.add_edgeout(e_1)
@@ -192,7 +202,7 @@ def main():
         print(i.edgein)
     print(len(nodescoll))
 
-    myroutes = routing(nodescoll[0], nodescoll[4], nodescoll)
+    myroutes = routing(nodescoll[0], nodescoll[1], nodescoll)
     #
     pp.pprint(myroutes)
     if False:
@@ -205,23 +215,23 @@ def main():
 if __name__ == "__main__":
     edgedefs = ["AB5", "BC4", "CD8", "DC8", "DE6", "AD5", "CE2", "EB3", "AE7"]
     nodescoll = make_nodescoll(edgedefs)
-    print(nodescoll)
-    for i in nodescoll:
-        print(i.edgein)
-    print(len(nodescoll))
+    # print(nodescoll)
+    # for i in nodescoll:
+    #    print(i.edgein)
+    # print(len(nodescoll))
+    if False:
+        myroutes = routing(nodescoll[0], nodescoll[2], nodescoll)
+        for route in myroutes:
+            for elem in route[0]:
+                print(elem.name)
+            print("+++++++++++++++++++++++++++++++++++++++++")
 
-    myroutes = routing(nodescoll[0], nodescoll[2], nodescoll)
+    myroutes = routing(nodescoll[2], nodescoll[1], nodescoll)
     for route in myroutes:
+        print("beginnode:")
         for elem in route[0]:
             print(elem.name)
-        print("+++++++++++++++++++++++++++++++++++++++++")
-
-    myroutes = routing(nodescoll[2], nodescoll[4], nodescoll)
-    for route in myroutes:
-        print("beginnode:" + str(nodescoll[2].name))
-        for elem in route[0]:
-            print(elem.name)
-        print("endnode:" + str(nodescoll[4].name))
+        print("endnode")
         print("___________________________________________________")
 
     #

@@ -41,10 +41,18 @@ class Route:
         self.end = False
 
     def return_nrstops(self):
-        pass
+        count += 1
+        for elem in self.route:
+            if type(elem) == Node:
+                count += 1
+        return count
 
     def return_totdistance(self):
-        pass
+        dist = 0
+        for elem in self.route:
+            if type(elem) == Edge:
+                dist += elem.weight
+        return dist
 
     def checknodesinroute(self):
         # Check if last node in route already exists route
@@ -68,12 +76,12 @@ class Route:
         # tempcopy = copy.deepcopy(routes[i])  # copie to start alternative route
         for j in range(len(node.edgeout)):
             if j < 1:
-                self.route[0].append(node.edgeout[j])
+                self.route.append(node.edgeout[j])
             else:
                 # start alternative route
-                tempcopy = [elem for elem in self.route[0][:-1]]
+                tempcopy = [elem for elem in self.route[:-1]]
                 altroutes.append(tempcopy)
-                altroutes[-1][0].append(node.edgeout[j])
+                altroutes[-1].append(node.edgeout[j])
         return altroutes
 
 
@@ -105,7 +113,7 @@ def routing(beginnode, endnode, nodes):
                 continue
 
         altroutes = route.add_edges()
-        routes.extend([Routes(ro) for ro in altroutes])
+        routes.extend([Route(ro) for ro in altroutes])
         edgein = route.route[-1]
         nodein = edgein.find_node(nodes, "in")
         # print(i)
@@ -138,6 +146,9 @@ if __name__ == "__main__":
     # print(len(nodescoll))
 
     bn = nodescoll[0]
-    en = nodescoll[0]
+    en = nodescoll[2]
 
     de = routing(bn, en, nodescoll)
+    print(de)
+    for route in de:
+        print(route.return_totdistance())

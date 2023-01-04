@@ -41,11 +41,18 @@ class Route:
         self.end = False
 
     def return_nrstops(self):
-        count += 1
+        count = 0
         for elem in self.route:
             if type(elem) == Node:
                 count += 1
         return count
+
+    def print_stops(self):
+        stops = []
+        for elem in self.route:
+            if type(elem) == Node:
+                stops.append(elem.name)
+        print(stops)
 
     def return_totdistance(self):
         dist = 0
@@ -54,7 +61,7 @@ class Route:
                 dist += elem.weight
         return dist
 
-    def checknodesinroute(self):
+    def check_nodereaccurance(self):
         # Check if last node in route already exists route
         # Input: Route-object
         # Output:  Bool
@@ -64,6 +71,22 @@ class Route:
             if elem == checknode:
                 result = True
         return result
+
+    def checknodesorder(self, nodenames):
+        if self.return_nrstops() != len(nodenames):
+            return False
+        i = 0
+        for elem in self.route:
+            if type(elem) == Node:
+                if elem.name == nodenames[i]:
+                    i += 1
+                else:
+                    return False
+        if i == len(nodenames):
+            return True
+        else:
+            return False
+        # return result
 
     def add_edges(self):
         # Add edge to last node in route
@@ -120,7 +143,7 @@ def routing(beginnode, endnode, nodes):
         # print(nodein)
         route.route.append(nodein)
 
-        if route.checknodesinroute():
+        if route.check_nodereaccurance():
             i += 1  # ends not at destination
             continue
             # route[1] = True
@@ -129,9 +152,9 @@ def routing(beginnode, endnode, nodes):
         if route.end:
             i += 1
         if len(routes) == i:
-            print(i)
+            # print(i)
             break
-        if i == 10:
+        if i == 20:
             break  # emergency break
 
     return routes
@@ -145,10 +168,174 @@ if __name__ == "__main__":
     #    print(i.edgein)
     # print(len(nodescoll))
 
-    bn = nodescoll[0]
-    en = nodescoll[2]
+    if False:
+        bn = nodescoll[0]
+        en = nodescoll[2]
 
-    de = routing(bn, en, nodescoll)
-    print(de)
-    for route in de:
-        print(route.return_totdistance())
+        de = routing(bn, en, nodescoll)
+        print(de)
+        for route in de:
+            print(route.return_totdistance())
+    if False:
+        print("Question 1:")
+        # Question 1
+        bn = nodescoll[0]  # A
+        en = nodescoll[2]  # C
+
+        nodeorder = ["A", "B", "C"]
+        routes = routing(bn, en, nodescoll)
+
+        print(routes)
+        for route in routes:
+            res = route.checknodesorder(nodeorder)
+            print(res)
+            if res:
+                print(route.return_totdistance())
+                break
+                # xx
+    if False:
+        print("Question 2:")
+        # Question 2
+        bn = nodescoll[0]  # A
+        en = nodescoll[3]  # D
+
+        routes = routing(bn, en, nodescoll)
+
+        # print(routes)
+        distance = 999
+        for route in routes:
+            temp = route.return_totdistance()
+            distance = min(temp, distance)
+        print(distance)
+
+    if False:
+        print("Question 3:")
+        # Question 3
+        bn = nodescoll[0]  # A
+        en = nodescoll[2]  # C
+
+        nodeorder = ["A", "D", "C"]
+        routes = routing(bn, en, nodescoll)
+
+        print(routes)
+        for route in routes:
+            res = route.checknodesorder(nodeorder)
+            print(res)
+            if res:
+                print(route.return_totdistance())
+                break
+
+    if False:
+        print("Question 4:")
+        # Question 4
+        bn = nodescoll[0]  # A
+        en = nodescoll[3]  # D
+        nodeorder = ["A", "E", "B", "C", "D"]
+        routes = routing(bn, en, nodescoll)
+
+        print(routes)
+        for route in routes:
+            res = route.checknodesorder(nodeorder)
+            print(res)
+            if res:
+                print(route.return_totdistance())
+                break
+
+    if False:
+        print("Question 5:")
+        # Question 5
+        bn = nodescoll[0]  # A
+        en = nodescoll[3]  # D
+        nodeorder = ["A", "E", "D"]
+        routes = routing(bn, en, nodescoll)
+
+        print(routes)
+        for route in routes:
+            route.print_stops()
+            res = route.checknodesorder(nodeorder)
+            print(res)
+            if res:
+                print(route.return_totdistance())
+                break
+        # Nog afmaken
+
+    if False:
+        print("Question 6:")
+        bn = nodescoll[2]  # C
+        en = nodescoll[2]  # C
+        routes = routing(bn, en, nodescoll)
+
+        # print(routes)
+        result = 0
+        for route in routes:
+            route.print_stops()
+            if route.return_nrstops() < 5:
+                # res = route.checknodesorder(nodeorder)
+                # print(res)
+                result += 1
+        print(result)
+
+    if False:
+        print("Question 7:")
+        bn = nodescoll[0]  # A
+        en = nodescoll[2]  # C
+        routes1 = routing(bn, en, nodescoll)
+
+        bn = nodescoll[2]  # C
+        en = nodescoll[2]  # C
+        routes2 = routing(bn, en, nodescoll)
+
+        result = 0
+        print("______")
+        for route1 in routes1:
+            if route1.return_nrstops() == 5:
+
+                route1.print_stops()
+                print("______")
+                result += 1
+            for route2 in routes2:
+                temp_nrs = route1.return_nrstops() + route2.return_nrstops()
+                if temp_nrs == 6:
+                    route1.print_stops()
+                    route2.print_stops()
+                    print("______")
+                    result += 1
+                    # res = route.checknodesorder(nodeorder)
+                    # print(res)
+        print(result)
+
+    if False:
+        print("Question 8:")
+        bn = nodescoll[0]  # A
+        en = nodescoll[2]  # C
+        routes = routing(bn, en, nodescoll)
+
+        result = 0
+        print("______")
+        distance = 999
+        for route in routes:
+            temp = route.return_totdistance()
+            distance = min(temp, distance)
+        print(distance)
+
+    if False:
+        print("Question 9:")
+        bn = nodescoll[1]  # B
+        en = nodescoll[1]  # B
+        routes = routing(bn, en, nodescoll)
+
+        result = 0
+        print("______")
+        distance = 999
+        for route in routes:
+            temp = route.return_totdistance()
+            distance = min(temp, distance)
+        print(distance)
+
+    if True:
+        print("Question 10:")
+        bn = nodescoll[2]  # B
+        en = nodescoll[2]  # B
+
+        routes = routing(bn, en, nodescoll)
+        route_u30 = []

@@ -27,10 +27,10 @@ class Edge:
         print("|||||||||")
 
         for no in nodes:
-            print(no.name)
+            # print(no.name)
             if inout == "in":
                 for ed in no.edgein:
-                    print(ed.name)
+                    # print(ed.name)
                     if ed == self:
                         noderes = no
                 # if inout == "out":
@@ -124,8 +124,8 @@ def routing(beginnode, endnode, nodes):
         routes = _add_edges(routes, i)
         edgein = routes[i][0][-1]
         nodein = edgein.find_node(nodes, "in")
-        print(i)
-        print(nodein)
+        # print(i)
+        # print(nodein)
         routes[i][0].append(nodein)
 
         if checknodesinroute(routes[i]):
@@ -137,7 +137,7 @@ def routing(beginnode, endnode, nodes):
         if routes[i][1]:
             i += 1
         if len(routes) == i:
-            print(i)
+            # print(i)
             break
         if i == 10:
             break  # emergency break

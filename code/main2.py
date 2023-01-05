@@ -40,6 +40,17 @@ class Route:
         self.route = route
         self.end = False
 
+    def __add__(self, route):
+        # routeadd = Route(route.route[1:])
+        routeori = self.route
+        routeadd = route.route[1:]
+        # self.route.extend(routeadd)
+        r1 = Route(routeori + routeadd)
+        return r1
+
+    def extend_route(self, routeextra):
+        self.route.append(routeextra)
+
     def return_nrstops(self):
         count = 0
         for elem in self.route:
@@ -134,7 +145,6 @@ def routing(beginnode, endnode, nodes):
                 route.end = True  # end of route at destination
                 i += 1
                 continue
-
         altroutes = route.add_edges()
         routes.extend([Route(ro) for ro in altroutes])
         edgein = route.route[-1]
@@ -334,8 +344,46 @@ if __name__ == "__main__":
 
     if True:
         print("Question 10:")
-        bn = nodescoll[2]  # B
-        en = nodescoll[2]  # B
+        bn = nodescoll[2]  # C
+        en = nodescoll[2]  # C
 
         routes = routing(bn, en, nodescoll)
+        print(routes[0].return_totdistance())
+        print(routes[1].return_totdistance())
+        # routealt = routes[0] + routes[1]
+        # print(routealt.return_totdistance())
         route_u30 = []
+        for route in routes:
+            if route.return_totdistance() < 30:
+                route_u30.append([route, True])
+
+        x = 3
+        a = 0
+        while x > 0:
+            x = 3
+            for i, route in enumerate(routes):
+                # if route_u30[3 * a + i][1] == True:
+                routetest = route_u30[3 * a + i][0] + route
+                print(routetest.return_totdistance())
+                if routetest.return_totdistance() < 30:
+                    route_u30.append([routetest, True])
+                else:
+                    route_u30.append([routetest, False])
+                    x -= 1
+            a = a + 1
+            print(route_u30)
+        print(len(routes))
+
+        print(route_u30)
+        route_u30_2 = []
+        for r in route_u30:
+            if r[1] == True:
+                r[0].print_stops()
+                route_u30_2.append(r)
+
+        print(len(route_u30_2))
+
+        # for range(3):
+        #    for range(3)
+
+        # route_u30 = []

@@ -63,6 +63,7 @@ def routing(beginnode, endnode, nodes):
                 route.end = True  # end of route at destination
                 i += 1
                 continue
+
         altroutes = route.add_edges()
         routes.extend([Route(ro) for ro in altroutes])
         edgein = route.route[-1]
@@ -75,7 +76,7 @@ def routing(beginnode, endnode, nodes):
             i += 1  # ends not at destination
             continue
             # route[1] = True
-        if nodein == endnode:
+        if nodein.name == endnode.name:
             route.end = True  # end of route at destination
         if route.end:
             i += 1
@@ -88,36 +89,62 @@ def routing(beginnode, endnode, nodes):
     return routes
 
 
+def findroute(bn, en, edgedefs, intern=None):
+
+    nodescoll = make_nodescoll(edgedefs)
+    routes = routing(bn, en, nodescoll)
+    nodeorder = [bn.name]
+    for nn in intern:
+        nodeorder.append(nn.name)
+    nodeorder.append(en.name)
+
+    # print(routes)
+    for route in routes:
+        res = route.checknodesorder(nodeorder)
+        # print(res)
+        if res:
+            print(route.return_totdistance())
+            break
+
+
+# def print_routdist(route):
+
+
 if __name__ == "__main__":
     edgedefs = ["AB5", "BC4", "CD8", "DC8", "DE6", "AD5", "CE2", "EB3", "AE7"]
     nodescoll = make_nodescoll(edgedefs)
-    # print(nodescoll)
     # for i in nodescoll:
+    # print(nodescoll)
     #    print(i.edgein)
     # print(len(nodescoll))
 
     if True:
         print("______")
         print("Question 1:")
-        # Question 1
         bn = nodescoll[0]  # A
         en = nodescoll[2]  # C
-
-        nodeorder = ["A", "B", "C"]
+        intern = [nodescoll[1]]
+        findroute(bn, en, edgedefs, intern)
         routes = routing(bn, en, nodescoll)
+        if False:
+            # Question 1
 
-        # print(routes)
-        for route in routes:
-            res = route.checknodesorder(nodeorder)
-            # print(res)
-            if res:
-                print(route.return_totdistance())
-                break
-        time.sleep(1)  # xx
+            nodeorder = ["A", "B", "C"]
+
+            # print(routes)
+            for route in routes:
+                res = route.checknodesorder(nodeorder)
+                # print(res)
+                if res:
+                    print(route.return_totdistance())
+                    break
+            time.sleep(1)  # xx
+        xx
     if True:
         print("______")
         print("Question 2:")
         # Question 2
+
         bn = nodescoll[0]  # A
         en = nodescoll[3]  # D
 

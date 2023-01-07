@@ -31,7 +31,7 @@ class Edge:
             if inout == "in":
                 for ed in no.edgein:
                     # print(ed.name)
-                    if ed == self:
+                    if ed.name == self.name:
                         noderes = no
                 # if inout == "out":
                 #     if no.edgeout == self:

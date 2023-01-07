@@ -124,32 +124,42 @@ def findroutes(bn, en, edgedefs, **kwargs):
     time.sleep(1)  # xx
 
 
-def findroute(bn, en, edgedefs, intern=None):
+def findroute(bn, en, edgedefs, *args, **kwargs):
     nodescoll = make_nodescoll(edgedefs)
     routes = routing(bn, en, nodescoll)
     nodeorder = [bn.name]
-    if intern != None:
-        for nn in intern:
+    # if intern != None:
+
+    if "intern" in kwargs:
+        for nn in kwargs["intern"]:
             nodeorder.append(nn.name)
     nodeorder.append(en.name)
 
     # print(routes)
     routefound = False
-    for route in routes:
-        res = route.checknodesorder(nodeorder)
-        # print(res)
-        if res:
-            # print(route.return_totdistance())
-            routefound = True
-            break
-    if routefound:
-        distance = 999
+    # if "shortest" in args:
+    #    print("x")
+    #    xx
+    if "intern" in kwargs:
         for route in routes:
-            temp = route.return_totdistance()
-            distance = min(temp, distance)
-        print(distance)
+            res = route.checknodesorder(nodeorder)
+            # print(res)
+            if res:
+                # print(route.return_totdistance())
+                routefound = True
+                break
     else:
-        print("No Such Route")
+        if len(routes) > 0:
+            routefound = True
+    if "shortest" in args:
+        if routefound:
+            distance = 999
+            for route in routes:
+                temp = route.return_totdistance()
+                distance = min(temp, distance)
+            print(distance)
+        else:
+            print("No Such Route")
 
 
 # def print_routdist(route):
@@ -163,28 +173,14 @@ if __name__ == "__main__":
     #    print(i.edgein)
     # print(len(nodescoll))
 
-    if False:
+    if True:
         print("______")
         print("Question 1:")
         bn = nodescoll[0]  # A
         en = nodescoll[2]  # C
-        intern = [nodescoll[1]]
-        findroute(bn, en, edgedefs, intern)
-        # routes = routing(bn, en, nodescoll)
-        # if False:
-        #     # Question 1
-
-        #     nodeorder = ["A", "B", "C"]
-
-        #     # print(routes)
-        #     for route in routes:
-        #         res = route.checknodesorder(nodeorder)
-        #         # print(res)
-        #         if res:
-        #             print(route.return_totdistance())
-        #             break
-        #     time.sleep(1)  # xx
-        # xx
+        args = ["shortest"]
+        kwargs = {"intern": [nodescoll[1]]}
+        findroute(bn, en, edgedefs, *args, **kwargs)
     if True:
 
         print("______")
@@ -194,38 +190,17 @@ if __name__ == "__main__":
         bn = nodescoll[0]  # A
         en = nodescoll[3]  # D
 
-        findroute(bn, en, edgedefs)
-        # xx
-        # routes = routing(bn, en, nodescoll)
-
-        # print(routes)
-        # distance = 999
-        # for route in routes:
-        #    temp = route.return_totdistance()
-        #    distance = min(temp, distance)
-        # print(distance)
-        # time.sleep(1)  # xx
-
+        args = ["shortest"]
+        findroute(bn, en, edgedefs, *args)
     if True:
         print("______")
         print("Question 3:")
         # Question 3
         bn = nodescoll[0]  # A
         en = nodescoll[2]  # C
-        intern = [nodescoll[3]]
-        findroute(bn, en, edgedefs, intern)
-        # xx
-        # nodeorder = ["A", "D", "C"]
-        # routes = routing(bn, en, nodescoll)
-
-        # # print(routes)
-        # for route in routes:
-        #     res = route.checknodesorder(nodeorder)
-        #     # print(res)
-        #     if res:
-        #         print(route.return_totdistance())
-        #         break
-        # time.sleep(1)  # xx
+        args = ["shortest"]
+        kwargs = {"intern": [nodescoll[3]]}
+        findroute(bn, en, edgedefs, *args, **kwargs)
 
     if True:
         print("______")
@@ -233,23 +208,10 @@ if __name__ == "__main__":
         # Question 4
         bn = nodescoll[0]  # A
         en = nodescoll[3]  # C
-        intern = [nodescoll[4], nodescoll[1], nodescoll[2]]
-        findroute(bn, en, edgedefs, intern)
-        # xx
 
-        # bn = nodescoll[0]  # A
-        # en = nodescoll[3]  # D
-        # nodeorder = ["A", "E", "B", "C", "D"]
-        # routes = routing(bn, en, nodescoll)
-
-        # # print(routes)
-        # for route in routes:
-        #     res = route.checknodesorder(nodeorder)
-        #     # print(res)
-        #     if res:
-        #         print(route.return_totdistance())
-        #         break
-        # time.sleep(1)  # xx
+        args = ["shortest"]
+        kwargs = {"intern": [nodescoll[4], nodescoll[1], nodescoll[2]]}
+        findroute(bn, en, edgedefs, *args, **kwargs)
 
     if True:
         print("______")
@@ -257,22 +219,9 @@ if __name__ == "__main__":
         # Question 5
         bn = nodescoll[0]  # A
         en = nodescoll[3]  # D
-        intern = [nodescoll[4]]
-        findroute(bn, en, edgedefs, intern)
-        # xx
-        # nodeorder = ["A", "E", "D"]
-        # routes = routing(bn, en, nodescoll)
-
-        # # print(routes)
-        # for route in routes:
-        #     # route.print_stops()
-        #     res = route.checknodesorder(nodeorder)
-        #     print(res)
-        #     if res:
-        #         print(route.return_totdistance())
-        #         break
-        # # Nog afmaken
-        # time.sleep(1)  # xx
+        args = ["shortest"]
+        kwargs = {"intern": [nodescoll[4]]}
+        findroute(bn, en, edgedefs, *args, **kwargs)
 
     if True:
         print("______")
@@ -280,98 +229,46 @@ if __name__ == "__main__":
         bn = nodescoll[2]  # C
         en = nodescoll[2]  # C
 
+        args = ["shortest"]
         kwargs = {"maxstops": 3}
         findroutes(bn, en, edgedefs, **kwargs)
-        # xx
-        # routes = routing(bn, en, nodescoll)
-
-        # # print(routes)
-        # result = 0
-        # for route in routes:
-        #     # route.print_stops()
-        #     if route.return_nrstops() < 5:
-        #         # res = route.checknodesorder(nodeorder)
-        #         # print(res)
-        #         result += 1
-        # print(result)
-        # time.sleep(1)  # xx
 
     if True:
         print("______")
         print("Question 7:")
         bn = nodescoll[0]  # C
         en = nodescoll[2]  # C
-        # kwargs = {"nrstops": 2}
-        # findroutes(bn, en, edgedefs, **kwargs)
-        # kwargs = {"nrstops": 3}
-        # findroutes(bn, en, edgedefs, **kwargs)
+        args = ["shortest"]
         kwargs = {"nrstops": 4}
         findroutes(bn, en, edgedefs, **kwargs)
-        # kwargs = {"nrstops": 5}
-        # findroutes(bn, en, edgedefs, **kwargs)
-
-        xx
-        bn = nodescoll[0]  # A
-        en = nodescoll[2]  # C
-        routes1 = routing(bn, en, nodescoll)
-
-        bn = nodescoll[2]  # C
-        en = nodescoll[2]  # C
-        routes2 = routing(bn, en, nodescoll)
-        routenew = routes1 + routes2
-
-        result = 0
-        for route1 in routes1:
-            if route1.return_nrstops() == 5:
-
-                # route1.print_stops()
-                # print("______")
-                result += 1
-            for route2 in routes2:
-                temp_nrs = route1.return_nrstops() + route2.return_nrstops()
-                if temp_nrs == 6:
-                    # route1.print_stops()
-                    # route2.print_stops()
-                    # print("______")
-                    result += 1
-                    # res = route.checknodesorder(nodeorder)
-                    # print(res)
-        print(result)
-        time.sleep(1)  # xx
 
     if True:
-
         print("______")
         print("Question 8:")
 
-        findroute(bn, en, edgedefs, intern)
-
         bn = nodescoll[0]  # A
         en = nodescoll[2]  # C
-        routes = routing(bn, en, nodescoll)
 
-        result = 0
-        distance = 999
-        for route in routes:
-            temp = route.return_totdistance()
-            distance = min(temp, distance)
-        print(distance)
-        time.sleep(1)  # xx
+        args = ["shortest"]
+        findroute(bn, en, edgedefs, *args)
+        # xx
+        # routes = routing(bn, en, nodescoll)
+
+        # result = 0
+        # distance = 999
+        # for route in routes:
+        #     temp = route.return_totdistance()
+        #     distance = min(temp, distance)
+        # print(distance)
+        # time.sleep(1)  # xx
 
     if True:
         print("______")
         print("Question 9:")
         bn = nodescoll[1]  # B
         en = nodescoll[1]  # B
-        routes = routing(bn, en, nodescoll)
-
-        result = 0
-        distance = 999
-        for route in routes:
-            temp = route.return_totdistance()
-            distance = min(temp, distance)
-        print(distance)
-        time.sleep(1)  # xx
+        args = ["shortest"]
+        findroute(bn, en, edgedefs, *args)
 
     if True:
         print("Question 10:")
@@ -379,30 +276,26 @@ if __name__ == "__main__":
         en = nodescoll[2]  # C
 
         routes = routing(bn, en, nodescoll)
-        # print(routes[0].return_totdistance())
-        # print(routes[1].return_totdistance())
-        # routealt = routes[0] + routes[1]
-        # print(routealt.return_totdistance())
         route_u30 = []
         for route in routes:
             if route.return_totdistance() < 30:
                 route_u30.append([route, True])
 
-        x = 3
-        a = 0
-        while x > 0:
-            x = 3
+        x = len(route_u30)
+
+        for a in range(3):
             for i, route in enumerate(routes):
                 # if route_u30[3 * a + i][1] == True:
-                routetest = route_u30[3 * a + i][0] + route
+                routetest = route_u30[0][0] + route
                 # print(routetest.return_totdistance())
                 if routetest.return_totdistance() < 30:
                     route_u30.append([routetest, True])
                 else:
                     route_u30.append([routetest, False])
                     x -= 1
+            print(a)
             a = a + 1
-            # print(route_u30)
+        # print(route_u30)
         # print(len(routes))
 
         # print(route_u30)

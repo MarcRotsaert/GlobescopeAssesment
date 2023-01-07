@@ -127,6 +127,8 @@ def findroutes(bn, en, edgedefs, **kwargs):
             x1 = x2
             x2 = x1 + k
         print(len(route_u))
+        output = len(route_u)
+
     else:
         result = 0
         for route1 in routes1:
@@ -145,18 +147,20 @@ def findroutes(bn, en, edgedefs, **kwargs):
                 temp_nrs = route1.return_nrstops() + route2.return_nrstops()
                 if "maxstops" in kwargs:
                     if temp_nrs < kwargs["maxstops"] + 2:
-                        # route1.print_stops()
-                        # route2.print_stops()
                         # print("______")
                         result += 1
                 elif "nrstops" in kwargs:
                     if temp_nrs == kwargs["nrstops"] + 2:
+                        route1.print_stops()
+                        route2.print_stops()
                         result += 1
 
                     # res = route.checknodesorder(nodeorder)
                     # print(res)
         print(result)
-        time.sleep(1)  # xx
+        output = result
+        # time.sleep(1)  # xx
+    return output
 
 
 def findroute(bn, en, edgedefs, *args, **kwargs):
@@ -176,16 +180,12 @@ def findroute(bn, en, edgedefs, *args, **kwargs):
 
     # print(routes)
     routefound = False
-    # if "shortest" in args:
-    #    print("x")
-    #    xx
     if "intern" in kwargs:
         for route in routes:
             res = route.checknodesorder(nodeorder)
-            # print(res)
             if res:
-                # print(route.return_totdistance())
                 routefound = True
+                routes = [route]
                 break
     else:
         if len(routes) > 0:
@@ -196,9 +196,12 @@ def findroute(bn, en, edgedefs, *args, **kwargs):
             for route in routes:
                 temp = route.return_totdistance()
                 distance = min(temp, distance)
+            output = distance
             print(distance)
         else:
+            output = "No Such Route"
             print("No Such Route")
+    return output
 
 
 # def print_routdist(route):
@@ -206,13 +209,13 @@ def findroute(bn, en, edgedefs, *args, **kwargs):
 
 if __name__ == "__main__":
     edgedefs = ["AB5", "BC4", "CD8", "DC8", "DE6", "AD5", "CE2", "EB3", "AE7"]
-    nodescoll = make_nodescoll(edgedefs)
+    # nodescoll = make_nodescoll(edgedefs)
     # for i in nodescoll:
     # print(nodescoll)
     #    print(i.edgein)
     # print(len(nodescoll))
 
-    if True:
+    if False:
         print("______")
         print("Question 1:")
         bn = "A"  # A
@@ -221,7 +224,7 @@ if __name__ == "__main__":
         kwargs = {"intern": ["B"]}
         findroute(bn, en, edgedefs, *args, **kwargs)
         # xx
-    if True:
+    if False:
         print("______")
         print("Question 2:")
         # Question 2
@@ -231,7 +234,7 @@ if __name__ == "__main__":
 
         args = ["shortest"]
         findroute(bn, en, edgedefs, *args)
-    if True:
+    if False:
         print("______")
         print("Question 3:")
         # Question 3
@@ -246,13 +249,13 @@ if __name__ == "__main__":
         print("Question 4:")
         # Question 4
         bn = "A"  # A
-        en = "C"  # C
+        en = "D"  # C
 
         args = ["shortest"]
         kwargs = {"intern": ["E", "B", "C"]}
         findroute(bn, en, edgedefs, *args, **kwargs)
 
-    if True:
+    if False:
         print("______")
         print("Question 5:")
         # Question 5
@@ -275,13 +278,13 @@ if __name__ == "__main__":
     if True:
         print("______")
         print("Question 7:")
-        bn = "C"  # C
+        bn = "A"  # C
         en = "C"  # C
         args = ["shortest"]
         kwargs = {"nrstops": 4}
         findroutes(bn, en, edgedefs, **kwargs)
 
-    if True:
+    if False:
         print("______")
         print("Question 8:")
 
@@ -291,7 +294,7 @@ if __name__ == "__main__":
         args = ["shortest"]
         findroute(bn, en, edgedefs, *args)
 
-    if True:
+    if False:
         print("______")
         print("Question 9:")
         bn = "B"  # B
@@ -299,7 +302,7 @@ if __name__ == "__main__":
         args = ["shortest"]
         findroute(bn, en, edgedefs, *args)
 
-    if True:
+    if False:
         print("Question 10:")
         bn = "C"  # C
         en = "C"  # C

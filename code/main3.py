@@ -215,7 +215,7 @@ if __name__ == "__main__":
     #    print(i.edgein)
     # print(len(nodescoll))
 
-    if False:
+    if True:
         print("______")
         print("Question 1:")
         bn = "A"  # A
@@ -224,7 +224,7 @@ if __name__ == "__main__":
         kwargs = {"intern": ["B"]}
         findroute(bn, en, edgedefs, *args, **kwargs)
         # xx
-    if False:
+    if True:
         print("______")
         print("Question 2:")
         # Question 2
@@ -234,7 +234,7 @@ if __name__ == "__main__":
 
         args = ["shortest"]
         findroute(bn, en, edgedefs, *args)
-    if False:
+    if True:
         print("______")
         print("Question 3:")
         # Question 3
@@ -255,7 +255,7 @@ if __name__ == "__main__":
         kwargs = {"intern": ["E", "B", "C"]}
         findroute(bn, en, edgedefs, *args, **kwargs)
 
-    if False:
+    if True:
         print("______")
         print("Question 5:")
         # Question 5
@@ -284,7 +284,7 @@ if __name__ == "__main__":
         kwargs = {"nrstops": 4}
         findroutes(bn, en, edgedefs, **kwargs)
 
-    if False:
+    if True:
         print("______")
         print("Question 8:")
 
@@ -294,7 +294,7 @@ if __name__ == "__main__":
         args = ["shortest"]
         findroute(bn, en, edgedefs, *args)
 
-    if False:
+    if True:
         print("______")
         print("Question 9:")
         bn = "B"  # B
@@ -302,7 +302,7 @@ if __name__ == "__main__":
         args = ["shortest"]
         findroute(bn, en, edgedefs, *args)
 
-    if False:
+    if True:
         print("Question 10:")
         bn = "C"  # C
         en = "C"  # C

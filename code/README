@@ -1,0 +1,14 @@
+
+Vraag
+functie findroute of findroutes
+specifieke vraag via een *args of **kwargs
+
+
+SHELL 
+10 vragen beantwoorden
+	python/python3 main3.py
+unit testen 
+	python/python3 gsa_unittest.py
+
+
+

@@ -89,7 +89,7 @@ def routing(beginnode, endnode, nodes):
             route.route.append(nodein)
         except AttributeError:
             pass
-        if route.check_nodereaccurance():
+        if route.check_nodereoccurance():
             i += 1  # ends not at destination
             continue
             # route[1] = True

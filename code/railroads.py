@@ -77,7 +77,7 @@ class Route:
                 stops.append(elem.name)
         print(stops)
 
-    def check_nodereaccurance(self):
+    def check_noderoccurance(self):
         # Check if last node in route already exists route
         # Input: Route-object
         # Output:  Bool, True= last node is passed previous on route

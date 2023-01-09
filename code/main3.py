@@ -2,7 +2,7 @@ from railroads import Node, Edge, Route
 import time
 
 
-def letter2node(letter, nodescoll):
+def letter2node(letter: str, nodescoll: list) -> Node:
     # Pick Node- object from a list of Node objects by a letter
     nodeobj = None
     i = 0
@@ -13,7 +13,7 @@ def letter2node(letter, nodescoll):
     return nodeobj
 
 
-def make_nodescoll(edgedefs):
+def make_nodescoll(edgedefs: list) -> list:
     # make colllection (list) of Node-objects.
     # input: edgedefs=> list of strings containing 3 characters. example: 'AB4'
     # output: list of Nodeobjects.
@@ -47,7 +47,7 @@ def make_nodescoll(edgedefs):
     return nodescoll
 
 
-def routing(beginnode, endnode, nodes):
+def routing(beginnode: Node, endnode: Node, nodes: list) -> list:
     # Make possible and impossible routes based on beginnode, endnode and collection of nodes
     # Input:
     #   beginnode: beginning node (Node-object)
@@ -105,7 +105,7 @@ def routing(beginnode, endnode, nodes):
     return routes
 
 
-def findroute(bn, en, edgedefs, *args, **kwargs):
+def findroute(bn: str, en: str, edgedefs: list, *args, **kwargs) -> int | str | None:
     # MAIN FUNCTION1
     nodescoll = make_nodescoll(edgedefs)
     bn = letter2node(bn, nodescoll)
@@ -150,7 +150,7 @@ def findroute(bn, en, edgedefs, *args, **kwargs):
     return output
 
 
-def findroutes(bn, en, edgedefs, **kwargs):
+def findroutes(bn: str, en: str, edgedefs: list, **kwargs) -> int | str | None:
     # MAIN FUNCTION2
     nodescoll = make_nodescoll(edgedefs)
     bn = letter2node(bn, nodescoll)

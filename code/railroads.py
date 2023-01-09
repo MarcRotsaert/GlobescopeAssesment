@@ -2,30 +2,12 @@ import copy
 import pprint as pp
 
 
-class Node:
-    def __init__(self, name):
-        self.name = name
-        self.edgein = []
-        self.edgeout = []
-
-    def add_edgein(self, edge):
-        # add Edge to attribute edgein
-        # input: Edge-Object
-        self.edgein.append(edge)
-
-    def add_edgeout(self, edge):
-        # add Edge to attribute edgeout
-        # input: Edge-Object
-
-        self.edgeout.append(edge)
-
-
 class Edge:
-    def __init__(self, name, weight):
+    def __init__(self, name: str, weight: int):
         self.name = name
         self.weight = weight
 
-    def find_node(self, nodes, inout):
+    def find_node(self, nodes: list, inout: str):
         # search node-object, connected to edge-object
         # input: nodes  list of Node objects
         # inout: "in" or "out"
@@ -40,12 +22,30 @@ class Edge:
         return noderes
 
 
+class Node:
+    def __init__(self, name: str):
+        self.name = name
+        self.edgein = []
+        self.edgeout = []
+
+    def add_edgein(self, edge: Edge) -> None:
+        # add Edge to attribute edgein
+        # input: Edge-Object
+        self.edgein.append(edge)
+
+    def add_edgeout(self, edge: Edge) -> None:
+        # add Edge to attribute edgeout
+        # input: Edge-Object
+
+        self.edgeout.append(edge)
+
+
 class Route:
-    def __init__(self, route):
+    def __init__(self, route: list):
         self.route = route
         self.end = False
 
-    def __add__(self, route):
+    def __add__(self, route: list):
         # Extend route by adding extra rouappendextend_routete
         routeori = self.route
         routeadd = route.route[1:]
@@ -53,7 +53,7 @@ class Route:
         r1 = Route(routeori + routeadd)
         return r1
 
-    def return_nrstops(self):
+    def return_nrstops(self) -> int:
         # return number of nodes in route.
         count = 0
         for elem in self.route:
@@ -61,7 +61,7 @@ class Route:
                 count += 1
         return count
 
-    def return_totdistance(self):
+    def return_totdistance(self) -> int:
         # return total distance of a route
         dist = 0
         for elem in self.route:
@@ -69,7 +69,7 @@ class Route:
                 dist += elem.weight
         return dist
 
-    def print_stops(self):
+    def print_stops(self) -> None:
         # print name of nodes on screen
         stops = []
         for elem in self.route:
@@ -77,7 +77,7 @@ class Route:
                 stops.append(elem.name)
         print(stops)
 
-    def check_noderoccurance(self):
+    def check_nodereoccurance(self) -> bool:
         # Check if last node in route already exists route
         # Input: Route-object
         # Output:  Bool, True= last node is passed previous on route
@@ -88,7 +88,7 @@ class Route:
                 result = True
         return result
 
-    def checknodesorder(self, nodenames):
+    def checknodesorder(self, nodenames: list) -> bool:
         # Check if nodes in route are also present in input
         # input: list of strings.
         if self.return_nrstops() != len(nodenames):
@@ -106,7 +106,7 @@ class Route:
             return False
         # return result
 
-    def add_edges(self):
+    def add_edges(self) -> list:
         # Add edge to last node in route
         # Input:  routes => list of routes
         #           i => route to add edges an

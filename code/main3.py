@@ -3,6 +3,7 @@ import time
 
 
 def letter2node(letter, nodescoll):
+    # Pick Node- object from a list of Node objects by a letter
     nodeobj = None
     i = 0
     while nodeobj == None:
@@ -18,7 +19,6 @@ def make_nodescoll(edgedefs):
     # output: list of Nodeobjects.
 
     def decode_edge(text):
-
         edge1, edge2, dump = text
         weight = int(dump)
         return edge1, edge2, weight
@@ -73,15 +73,22 @@ def routing(beginnode, endnode, nodes):
                 route.end = True  # end of route at destination
                 i += 1
                 continue
-
         altroutes = route.add_edges()
-        routes.extend([Route(ro) for ro in altroutes])
-        edgein = route.route[-1]
-        nodein = edgein.find_node(nodes, "in")
-        # print(i)
-        # print(nodein)
-        route.route.append(nodein)
+        # if altroutes == []:
+        #    route.end = True  # end of route at destination
+        #    i += 1
+        #    continue
 
+        routes.extend([Route(ro) for ro in altroutes])
+        try:
+            edgein = route.route[-1]
+            nodein = edgein.find_node(nodes, "in")
+
+            # print(i)
+            # print(nodein)
+            route.route.append(nodein)
+        except AttributeError:
+            pass
         if route.check_nodereaccurance():
             i += 1  # ends not at destination
             continue
@@ -95,11 +102,56 @@ def routing(beginnode, endnode, nodes):
             break
         if i == 20:
             break  # emergency break
-
     return routes
 
 
+def findroute(bn, en, edgedefs, *args, **kwargs):
+    # MAIN FUNCTION1
+    nodescoll = make_nodescoll(edgedefs)
+    bn = letter2node(bn, nodescoll)
+    en = letter2node(en, nodescoll)
+
+    routes = routing(bn, en, nodescoll)
+    nodeorder = [bn.name]
+
+    if "intern" in kwargs:
+        for nn in kwargs["intern"]:
+            nn = letter2node(nn, nodescoll)
+            nodeorder.append(nn.name)
+    nodeorder.append(en.name)
+
+    # print(routes)
+    routefound = False
+    if "intern" in kwargs:
+        for route in routes:
+            res = route.checknodesorder(nodeorder)
+            if res:
+                routefound = True
+                routes = [route]
+                break
+    else:
+        if len(routes) > 0:
+            routefound = True
+    if "shortest" in args:
+        if routefound:
+            distance = 999
+            for route in routes:
+                temp = route.return_totdistance()
+                distance = min(temp, distance)
+            output = distance
+            print(distance)
+        else:
+            output = "No Such Route"
+            print("No Such Route")
+    else:
+        print("ruimte voor nieuwe functionaliteit")
+        output = None
+
+    return output
+
+
 def findroutes(bn, en, edgedefs, **kwargs):
+    # MAIN FUNCTION2
     nodescoll = make_nodescoll(edgedefs)
     bn = letter2node(bn, nodescoll)
     en = letter2node(en, nodescoll)
@@ -138,7 +190,6 @@ def findroutes(bn, en, edgedefs, **kwargs):
             elif "nrstops" in kwargs:
                 if route1.return_nrstops() == kwargs["nrstops"] + 1:
                     result += 1
-
                 # route1.print_stops()
                 # print("______")
                 # result += 1
@@ -155,65 +206,14 @@ def findroutes(bn, en, edgedefs, **kwargs):
                         route2.print_stops()
                         result += 1
 
-                    # res = route.checknodesorder(nodeorder)
-                    # print(res)
         print(result)
         output = result
         # time.sleep(1)  # xx
     return output
 
 
-def findroute(bn, en, edgedefs, *args, **kwargs):
-    nodescoll = make_nodescoll(edgedefs)
-    bn = letter2node(bn, nodescoll)
-    en = letter2node(en, nodescoll)
-
-    routes = routing(bn, en, nodescoll)
-    nodeorder = [bn.name]
-    # if intern != None:
-
-    if "intern" in kwargs:
-        for nn in kwargs["intern"]:
-            nn = letter2node(nn, nodescoll)
-            nodeorder.append(nn.name)
-    nodeorder.append(en.name)
-
-    # print(routes)
-    routefound = False
-    if "intern" in kwargs:
-        for route in routes:
-            res = route.checknodesorder(nodeorder)
-            if res:
-                routefound = True
-                routes = [route]
-                break
-    else:
-        if len(routes) > 0:
-            routefound = True
-    if "shortest" in args:
-        if routefound:
-            distance = 999
-            for route in routes:
-                temp = route.return_totdistance()
-                distance = min(temp, distance)
-            output = distance
-            print(distance)
-        else:
-            output = "No Such Route"
-            print("No Such Route")
-    return output
-
-
-# def print_routdist(route):
-
-
 if __name__ == "__main__":
     edgedefs = ["AB5", "BC4", "CD8", "DC8", "DE6", "AD5", "CE2", "EB3", "AE7"]
-    # nodescoll = make_nodescoll(edgedefs)
-    # for i in nodescoll:
-    # print(nodescoll)
-    #    print(i.edgein)
-    # print(len(nodescoll))
 
     if True:
         print("______")
@@ -280,7 +280,6 @@ if __name__ == "__main__":
         print("Question 7:")
         bn = "A"  # C
         en = "C"  # C
-        args = ["shortest"]
         kwargs = {"nrstops": 4}
         findroutes(bn, en, edgedefs, **kwargs)
 
@@ -306,5 +305,29 @@ if __name__ == "__main__":
         print("Question 10:")
         bn = "C"  # C
         en = "C"  # C
+        kwargs = {"maxdist": 30}
+        findroutes(bn, en, edgedefs, **kwargs)
+
+    if True:
+        print("Question 11:")
+        bn = "B"  # C
+        en = "C"  # C
+        kwargs = {"maxdist": 70}
+        findroutes(bn, en, edgedefs, **kwargs)
+
+    if False:
+        print("______")
+        print("Question 12:")
+        bn = "A"  # C
+        en = "C"  # C
+        kwargs = {"nrstops": 6}
+        findroutes(bn, en, edgedefs, **kwargs)
+
+    if False:
+        edgedefs.extend(["FG2"])
+        bn = "C"  # C
+        en = "G"  # C
+        args = ["shortest"]
+        findroute(bn, en, edgedefs, *args)
         kwargs = {"maxdist": 30}
         findroutes(bn, en, edgedefs, **kwargs)

@@ -1,14 +1,43 @@
 
-Vraag
-functie findroute of findroutes
-specifieke vraag via een *args of **kwargs
+Het programma is opgesteld in pyhton versie 3.10.9
+Er zijn geen aanvullende bibliotheken nodig.
+Onderdelen van het programma zijn aan te roepen via een IDE of via een shell
 
+_________________
+SHELL
+Scripts starten via shell 
+Beantwoorden 10 vragen assesment en extra vragen
+	python main3.py of python3 main3.py
+Unit Testen 
+	python gsa_unittest.py of python3 gsa_unittest.py
 
-SHELL 
-10 vragen beantwoorden
-	python/python3 main3.py
-unit testen 
-	python/python3 gsa_unittest.py
+_____________________
+IDE
+Met de functies "findroute" en "findroutes" in bestand main3.py kunnen de 10 vragen uit het assesment opgelost worden.
+En kan met andere input parameters andere vragen beantwoord worden. 
 
+findroute:
+	functie voor beantwoorden vragen over route, waarbij de route niet verder gaat dan eindpunt	
+findroutes: 
+	functie voor beantwoorden vragen over route, waarbij de route na bereiken eindpunt verder kan lopen. 
 
+Input voor functies:
+findroute(bn,en,edgedefs,*args,**kwargs)	
+	bn: letter beginpunt route, str, bijvoorbeeld 'A'
+	en: letter eindpunt route, str, bijvoorbeeld 'B'
+	edgedefs: definitie van edges, list van strings, bijvoorbeeld ['AB4','BC2'] 
 
+Je kan je vraag specifieker maken via een *args of **kwargs
+
+findroute
+args:
+	'shortest' 		bepaal afstand kortste route tussen begin en eind punt
+kwargs
+	intern=[list]	tussenpunten, bijvoorbeeld "A", of ["A", B"]
+
+findroutes
+kwargs: 
+	maxdist=20		bepaal aantal routes met maximale afstand=20
+	nrstops=4 		bepaal aantal routes met 4 stops.
+	maxstops=3		bepaal aantal routes met maximaal 3 stops
+	intern=[list]	tussenpunten, bijvoorbeeld "A", of ["A", B"]

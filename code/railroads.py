@@ -7,8 +7,8 @@ class Edge:
         self.name = name
         self.weight = weight
 
-    def find_node(self, nodes: list, inout: str):
-        # search node-object, connected to edge-object
+    def find_connectednode(self, nodes: list, inout: str):
+        # search node-object, connected to this Node-object
         # input: nodes  list of Node objects
         # inout: "in" or "out"
         for no in nodes:
@@ -46,7 +46,7 @@ class Route:
         self.end = False
 
     def __add__(self, route: list):
-        # Extend route by adding extra rouappendextend_routete
+        # Extend route by adding extra route informatie at end of route attribute
         routeori = self.route
         routeadd = route.route[1:]
         # self.route.extend(routeadd)
@@ -88,9 +88,9 @@ class Route:
                 result = True
         return result
 
-    def checknodesorder(self, nodenames: list) -> bool:
+    def check_nodesorder(self, nodenames: list) -> bool:
         # Check if nodes in route are also present in input
-        # input: list of strings.
+        # input: nodesnames list of strings.
         if self.return_nrstops() != len(nodenames):
             return False
         i = 0
@@ -106,10 +106,10 @@ class Route:
             return False
         # return result
 
-    def add_edges(self) -> list:
-        # Add edge to last node in route
+    def add_toroute(self) -> list:
+        # Add edge to last node in route or start alternative route
         # Input:  routes => list of routes
-        #           i => route to add edges an
+        #
         altroutes = []
         node = self.route[-1]
         # tempcopy = copy.deepcopy(routes[i])  # copie to start alternative route

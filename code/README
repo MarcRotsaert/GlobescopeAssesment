@@ -13,12 +13,12 @@ Unit Testen
 
 _____________________
 IDE
-Met de functies "findroute" en "findroutes" in bestand main3.py kunnen de 10 vragen uit het assesment opgelost worden.
+Met de functies "findroute" en "findroute_extend" in bestand main3.py kunnen de 10 vragen uit het assesment opgelost worden.
 En kan met andere input parameters andere vragen beantwoord worden. 
 
 findroute:
 	functie voor beantwoorden vragen over route, waarbij de route niet verder gaat dan eindpunt	
-findroutes: 
+findroute_extend: 
 	functie voor beantwoorden vragen over route, waarbij de route na bereiken eindpunt verder kan lopen. 
 
 Input voor functies:
@@ -35,7 +35,7 @@ args:
 kwargs
 	intern=[list]	tussenpunten, bijvoorbeeld "A", of ["A", B"]
 
-findroutes
+findroute_extend
 kwargs: 
 	maxdist=20		bepaal aantal routes met maximale afstand=20
 	nrstops=4 		bepaal aantal routes met 4 stops.

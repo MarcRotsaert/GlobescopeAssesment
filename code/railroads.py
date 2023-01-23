@@ -1,5 +1,5 @@
-import copy
-import pprint as pp
+# import copy
+# import pprint as pp
 
 
 class Edge:
@@ -8,7 +8,7 @@ class Edge:
         self.weight = weight
 
     def find_connectednode(self, nodes: list, inout: str):
-        # search node-object, connected to this Node-object
+        # search node-object, connected to this Edge-object
         # input: nodes  list of Node objects
         # inout: "in" or "out"
         for no in nodes:
@@ -18,7 +18,7 @@ class Edge:
                     if ed.name == self.name:
                         noderes = no
             if inout == "out":
-                pass
+                pass  # not yet implemented
         return noderes
 
 
@@ -36,7 +36,6 @@ class Node:
     def add_edgeout(self, edge: Edge) -> None:
         # add Edge to attribute edgeout
         # input: Edge-Object
-
         self.edgeout.append(edge)
 
 
@@ -56,7 +55,7 @@ class Route:
     def return_nrstops(self) -> int:
         # return number of nodes in route.
         count = 0
-        for elem in self.route:
+        for elem in self.route[1:]:
             if type(elem) == Node:
                 count += 1
         return count
@@ -91,7 +90,7 @@ class Route:
     def check_nodesorder(self, nodenames: list) -> bool:
         # Check if nodes in route are also present in input
         # input: nodesnames list of strings.
-        if self.return_nrstops() != len(nodenames):
+        if self.return_nrstops() != len(nodenames) - 1:
             return False
         i = 0
         for elem in self.route:
@@ -120,8 +119,7 @@ class Route:
                 # start alternative route
                 tempcopy = [elem for elem in self.route[:-1]]
                 altroutes.append(tempcopy)
-                # if node.edgeout[j].name == "G":
-                #    xx
+
                 altroutes[-1].append(node.edgeout[j])
         return altroutes
 

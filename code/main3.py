@@ -111,6 +111,7 @@ def make_nodeorder(nodescoll, bn, en, kwargs):
     return nodeorder
 
 
+"""
 def findroute(bn: str, en: str, graphdefs: list, *args, **kwargs) -> int | str | None:
     # MAIN FUNCTION1
 
@@ -167,85 +168,198 @@ def findroute(bn: str, en: str, graphdefs: list, *args, **kwargs) -> int | str |
         output = "No Such Route"
         print("No Such Route")
     return output
+"""
 
 
-def findroute_extend(bn: str, en: str, graphdefs: list, **kwargs) -> int | str | None:
+def init_findroute(graphdefs, bn, en, kwargs):
+    nodescoll = make_nodescoll(graphdefs)
+    bn = letter2node(bn, nodescoll)
+    en = letter2node(en, nodescoll)
+    nodeorder = make_nodeorder(nodescoll, bn, en, kwargs)
+    # routingroutes = routing(bn, en, nodescoll)
+    return nodescoll, nodeorder, bn, en
+
+
+def findcorrectroutes(routes, kwargs):
+    if "intern" in kwargs:
+        for route in routes1:
+            res = route.check_nodesorder(nodeorder)
+            if res:
+                routefound = True
+                routes.append(route)
+                # break
+            # routes = []
+    else:
+        routes = routes1
+    return routes
+
+
+def count_routesmaxstop(routes, routes2, maxstops):
+    result = 0
+    for route1 in routes:
+        nrstop1 = route1.return_nrstops()
+        if nrstop1 < maxstops + 1:
+            result += 1
+        for route2 in routes2:
+            nrstop12 = nrstop1 + route2.return_nrstops()
+            if nrstop12 < maxstops + 1:
+                result += 1
+    return result
+
+
+def count_routesnrstop(routes, routes2, nrstops):
+    result = 0
+    for route1 in routes:
+        nrstop1 = route1.return_nrstops()
+        if nrstop1 == nrstops:
+            result += 1
+        for route2 in routes2:
+            nrstop12 = nrstop1 + route2.return_nrstops()
+            if nrstop12 == nrstops:
+                result += 1
+    return result
+
+
+def count_routesmaxdist(routes, routes2, maxdist):
+    route_u = []
+    for route in routes:
+        if route.return_totdistance() < maxdist:
+            # route_u.append([route, True])
+            route_u.append(route)
+    x1 = 0
+    x2 = len(route_u)
+    while x2 > x1:
+        k = 0
+        for a in range(x1, x2):
+            for route in routes2:
+                routetest = route_u[a] + route
+                if routetest.return_totdistance() < maxdist:
+                    route_u.append(routetest)
+                    k += 1
+        x1 = x2
+        x2 = x1 + k
+    # print(len(route_u))
+    output = len(route_u)
+    return output
+
+
+def findroute_extend(
+    bn: str, en: str, graphdefs: list, *args, **kwargs
+) -> int | str | None:
     # MAIN FUNCTION2
+    # args:
     # kwargs:
     #   maxdist
     #   maxstops
     #   nrstops
-    nodescoll = make_nodescoll(graphdefs)
-    bn = letter2node(bn, nodescoll)
-    en = letter2node(en, nodescoll)
+    nodescoll, nodeorder, bn, en = init_findroute(graphdefs, bn, en, kwargs)
+    # nodescoll = make_nodescoll(graphdefs)
+    # bn = letter2node(bn, nodescoll)
+    # en = letter2node(en, nodescoll)
 
     routes1 = routing(bn, en, nodescoll)
     routes2 = routing(en, en, nodescoll)
 
-    if "maxdist" in kwargs:
-        route_u = []
+    routefound = False
+    if "intern" in kwargs:
+        routes = []
         for route in routes1:
-            if route.return_totdistance() < kwargs["maxdist"]:
-                route_u.append([route, True])
-        x1 = 0
-        x2 = len(route_u)
-        while x2 > x1:
-            k = 0
-            for a in range(x1, x2):
-                for i, route in enumerate(routes2):
-                    # if route_u[3 * a + i][1] == True:
-                    routetest = route_u[a][0] + route
-                    # print(routetest.return_totdistance())
-                    if routetest.return_totdistance() < kwargs["maxdist"]:
-                        route_u.append([routetest, True])
-                        k += 1
-            x1 = x2
-            x2 = x1 + k
-        print(len(route_u))
-        output = len(route_u)
+            res = route.check_nodesorder(nodeorder)
+            if res:
+                routefound = True
+                routes.append(route)
+                # break
+            # routes = []
+    else:
+        routes = routes1
+
+    if len(routes) > 0:
+        # routes = routingroutes
+        routefound = True
+    if routefound == False:
+        output = "No Such Route"
+        print("No Such Route")
+        return output
+
+    # Answering different questions
+    if "shortest" in args:
+        # routefound = False
+        # routes = []
+
+        if routefound:
+            distance = 999
+            for route in routes:
+                temp = route.return_totdistance()
+                distance = min(temp, distance)
+            output = distance
+            # print(distance)
+
+    elif "maxdist" in kwargs:
+        output = count_routesmaxdist(routes, routes2, kwargs["maxdist"])
+        # route_u = []
+        # for route in routes:
+        #     if route.return_totdistance() < kwargs["maxdist"]:
+        #         # route_u.append([route, True])
+        #         route_u.append(route)
+        # x1 = 0
+        # x2 = len(route_u)
+        # while x2 > x1:
+        #     k = 0
+        #     for a in range(x1, x2):
+        #         for route in routes2:
+        #             routetest = route_u[a] + route
+        #             if routetest.return_totdistance() < kwargs["maxdist"]:
+        #                 route_u.append(routetest)
+        #                 k += 1
+        #     x1 = x2
+        #     x2 = x1 + k
+        # # print(len(route_u))
+        # output = len(route_u)
 
     else:
-        result = 0
-        for route1 in routes1:
-            if "maxstops" in kwargs:
-                if route1.return_nrstops() < kwargs["maxstops"] + 2:
-                    result += 1
-            elif "nrstops" in kwargs:
-                if route1.return_nrstops() == kwargs["nrstops"] + 1:
-                    result += 1
-                # route1.print_stops()
-                # print("______")
-                # result += 1
+        if "maxstops" in kwargs:
+            output = count_routesmaxstop(routes, routes2, kwargs["maxstops"])
+        elif "nrstops" in kwargs:
+            output = count_routesnrstop(routes, routes2, kwargs["nrstops"])
 
-            for route2 in routes2:
-                temp_nrs = route1.return_nrstops() + route2.return_nrstops()
-                if "maxstops" in kwargs:
-                    if temp_nrs < kwargs["maxstops"] + 2:
-                        # print("______")
-                        result += 1
-                elif "nrstops" in kwargs:
-                    if temp_nrs == kwargs["nrstops"] + 2:
-                        route1.print_stops()
-                        route2.print_stops()
-                        result += 1
+        # result = 0
+        # for route1 in routes:
+        #     if "maxstops" in kwargs:
+        #         if route1.return_nrstops() < kwargs["maxstops"] + 1:
+        #             result += 1
+        #     elif "nrstops" in kwargs:
+        #         if route1.return_nrstops() == kwargs["nrstops"]:
+        #             result += 1
 
-        print(result)
-        output = result
-        # time.sleep(1)  # xx
+        #     for route2 in routes2:
+        #         temp_nrs = route1.return_nrstops() + route2.return_nrstops()
+        #         if "maxstops" in kwargs:
+        #             if temp_nrs < kwargs["maxstops"] + 1:
+        #                 result += 1
+        #         elif "nrstops" in kwargs:
+        #             if temp_nrs == kwargs["nrstops"]:
+        #                 result += 1
+        # output = result
     return output
+
+
+#        print(result)
+#        output = result
+# time.sleep(1)  # xx
+#    return output
 
 
 if __name__ == "__main__":
     graphdefs = ["AB5", "BC4", "CD8", "DC8", "DE6", "AD5", "CE2", "EB3", "AE7"]
 
-    if False:
+    if True:
         print("______")
         print("Question 1:")
         bn = "A"  # A
         en = "C"  # C
         args = ["shortest"]
         kwargs = {"intern": ["B"]}
-        findroute(bn, en, graphdefs, *args, **kwargs)
+        findroute_extend(bn, en, graphdefs, *args, **kwargs)
         # xx
     if False:
         print("______")

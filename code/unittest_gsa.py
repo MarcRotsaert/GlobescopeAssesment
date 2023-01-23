@@ -1,5 +1,7 @@
 import unittest
-from main3 import findroute, findroute_extend
+
+# from main3 import findroute, findroute_extend
+from main3 import findroute_extend
 
 
 class questionMethods(unittest.TestCase):
@@ -10,31 +12,29 @@ class questionMethods(unittest.TestCase):
         en = "C"  # C
         args = ["shortest"]
         kwargs = {"intern": ["B"]}
-        self.assertEqual(findroute(bn, en, self.graphdefs, *args, **kwargs), 9)
+        # self.assertEqual(findroute(bn, en, self.graphdefs, *args, **kwargs), 9)
+        self.assertEqual(findroute_extend(bn, en, self.graphdefs, *args, **kwargs), 9)
 
     def test_q2(self):
         bn = "A"  # A
         en = "D"  # D
         args = ["shortest"]
-        self.assertEqual(findroute(bn, en, self.graphdefs, *args), 5)
+        # self.assertEqual(findroute(bn, en, self.graphdefs, *args), 5)
+        self.assertEqual(findroute_extend(bn, en, self.graphdefs, *args), 5)
 
     def test_q3(self):
         bn = "A"  # A
         en = "C"  # C
         args = ["shortest"]
         kwargs = {"intern": "D"}
-
-        kwargs = {"intern": "D"}
-        self.assertEqual(findroute(bn, en, self.graphdefs, *args, **kwargs), 13)
-
-        args = ["shortest"]
+        self.assertEqual(findroute_extend(bn, en, self.graphdefs, *args, **kwargs), 13)
 
     def test_q4(self):
         bn = "A"  # A
         en = "D"  # C
         args = ["shortest"]
         kwargs = {"intern": ["E", "B", "C"]}
-        self.assertEqual(findroute(bn, en, self.graphdefs, *args, **kwargs), 22)
+        self.assertEqual(findroute_extend(bn, en, self.graphdefs, *args, **kwargs), 22)
 
     def test_q5(self):
         bn = "A"  # A
@@ -42,7 +42,7 @@ class questionMethods(unittest.TestCase):
         args = ["shortest"]
         kwargs = {"intern": "E"}
         self.assertEqual(
-            findroute(bn, en, self.graphdefs, *args, **kwargs), "No Such Route"
+            findroute_extend(bn, en, self.graphdefs, *args, **kwargs), "No Such Route"
         )
 
     def test_q6(self):
@@ -63,13 +63,13 @@ class questionMethods(unittest.TestCase):
         bn = "A"  # A
         en = "C"  # C
         args = ["shortest"]
-        self.assertEqual(findroute(bn, en, self.graphdefs, *args), 9)
+        self.assertEqual(findroute_extend(bn, en, self.graphdefs, *args), 9)
 
     def test_q9(self):
         bn = "B"  # B
         en = "B"  # B
         args = ["shortest"]
-        self.assertEqual(findroute(bn, en, self.graphdefs, *args), 9)
+        self.assertEqual(findroute_extend(bn, en, self.graphdefs, *args), 9)
 
     def test_q10(self):
         bn = "C"  # C

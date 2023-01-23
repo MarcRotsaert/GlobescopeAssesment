@@ -1,5 +1,6 @@
 from railroads import Node, Edge, Route
-import time
+
+# import time
 
 
 def letter2node(letter: str, nodescoll: list) -> Node:
@@ -27,12 +28,11 @@ def make_nodescoll(graphdefs: list) -> list:
     nodesnames = []
     for temp in graphdefs:
         dump = decode_edge(temp)
-        nodesnames.append(dump[0])
-        nodesnames.append(dump[1])
+        nodesnames.extend([dump[0], dump[1]])
     nodesnames = list(set(nodesnames))
     nodesnames.sort()
-    for no in nodesnames:
-        nodescoll.append(Node(no))
+
+    nodescoll = [Node(no) for no in nodesnames]
 
     for temp in graphdefs:
         dump = decode_edge(temp)
@@ -40,14 +40,12 @@ def make_nodescoll(graphdefs: list) -> list:
         for i, no in enumerate(nodescoll):
             if no.name == dump[0]:
                 no.add_edgeout(e_1)
-                # break
-        for i, no in enumerate(nodescoll):
-            if no.name == dump[1]:
+            elif no.name == dump[1]:
                 no.add_edgein(e_1)
     return nodescoll
 
 
-def routing(beginnode: Node, endnode: Node, nodes: list) -> list:
+def routing(beginnode: Node, endnode: Node, nodes: list, maxroutes=20) -> list:
     # Make possible and impossible routes based on beginnode, endnode and collection of nodes
     # Input:
     #   beginnode: beginning node (Node-object)
@@ -59,79 +57,97 @@ def routing(beginnode: Node, endnode: Node, nodes: list) -> list:
     #   routes[x]= routes[x][0] =>list nodes-edge;
     #   routes[x][1] => False= route continues; True = routes ends
 
-    # initiate first route
+    def addnode2route(route):
+        node = route.route[-1].find_connectednode(nodes, "in")
+        route.route.append(node)
+        return route, node
+
+    def check_endroute(node, endnode):
+        # check
+        return node.name == endnode.name
+
+    # initiate routes
     routes = []
     routes.append(Route([beginnode]))
+
     i = 0  # Route teller
-    # for a in range(10):
     while i <= len(routes) - 1:
+
         route = routes[i]
         if type(route.route[-1]) is Edge:
-            node = route.route[-1].find_connectednode(nodes, "in")
-            route.route.append(node)
-            if node.name == endnode.name:
+            route, node = addnode2route(route)
+            if check_endroute(node, endnode):
                 route.end = True  # end of route at destination
                 i += 1
                 continue
+
         altroutes = route.add_toroute()
-        # if altroutes == []:
-        #    route.end = True  # end of route at destination
-        #    i += 1
-        #    continue
-
         routes.extend([Route(ro) for ro in altroutes])
-        try:
-            edgein = route.route[-1]
-            nodein = edgein.find_connectednode(nodes, "in")
+        route, node = addnode2route(route)
 
-            # print(i)
-            # print(nodein)
-            route.route.append(nodein)
-        except AttributeError:
-            pass
         if route.check_nodereoccurance():
             i += 1  # ends not at destination
             continue
-            # route[1] = True
-        if nodein.name == endnode.name:
+        if check_endroute(node, endnode):
             route.end = True  # end of route at destination
-        if route.end:
             i += 1
-        if len(routes) == i:
-            # print(i)
+
+        if len(routes) == i or i == maxroutes:
+            print(i)
             break
-        if i == 20:
-            break  # emergency break
     return routes
 
 
-def findroute(bn: str, en: str, graphdefs: list, *args, **kwargs) -> int | str | None:
-    # MAIN FUNCTION1
-    nodescoll = make_nodescoll(graphdefs)
-    bn = letter2node(bn, nodescoll)
-    en = letter2node(en, nodescoll)
+def make_nodeorder(nodescoll, bn, en, kwargs):
+    # bn = letter2node(bn, nodescoll)
+    # en = letter2node(en, nodescoll)
 
-    routes = routing(bn, en, nodescoll)
     nodeorder = [bn.name]
-
     if "intern" in kwargs:
         for nn in kwargs["intern"]:
             nn = letter2node(nn, nodescoll)
             nodeorder.append(nn.name)
     nodeorder.append(en.name)
+    return nodeorder
 
-    # print(routes)
+
+def findroute(bn: str, en: str, graphdefs: list, *args, **kwargs) -> int | str | None:
+    # MAIN FUNCTION1
+
+    # kwargs:
+    #   intern: points between start and end point.
+    #   shortest: return shortest route
+    #
+
+    nodescoll = make_nodescoll(graphdefs)
+    bn = letter2node(bn, nodescoll)
+    en = letter2node(en, nodescoll)
+    # nodeorder = [bn.name]
+    # if "intern" in kwargs:
+    #     for nn in kwargs["intern"]:
+    #         nn = letter2node(nn, nodescoll)
+    #         nodeorder.append(nn.name)
+    # nodeorder.append(en.name)
+    nodeorder = make_nodeorder(nodescoll, bn, en, kwargs)
+    routingroutes = routing(bn, en, nodescoll)
+
     routefound = False
+    routes = []
     if "intern" in kwargs:
-        for route in routes:
+        for route in routingroutes:
             res = route.check_nodesorder(nodeorder)
             if res:
                 routefound = True
-                routes = [route]
-                break
+                routes.append(route)
+                # break
+        # routes = []
     else:
-        if len(routes) > 0:
-            routefound = True
+        routes = routingroutes
+
+    if len(routes) > 0:
+        # routes = routingroutes
+        routefound = True
+
     if "shortest" in args:
         if routefound:
             distance = 999
@@ -140,18 +156,25 @@ def findroute(bn: str, en: str, graphdefs: list, *args, **kwargs) -> int | str |
                 distance = min(temp, distance)
             output = distance
             print(distance)
-        else:
-            output = "No Such Route"
-            print("No Such Route")
+        # else:
+        #    output = "No Such Route"
+        #    print("No Such Route")
     else:
         print("ruimte voor nieuwe functionaliteit")
         output = None
 
+    if routefound == False:
+        output = "No Such Route"
+        print("No Such Route")
     return output
 
 
 def findroute_extend(bn: str, en: str, graphdefs: list, **kwargs) -> int | str | None:
     # MAIN FUNCTION2
+    # kwargs:
+    #   maxdist
+    #   maxstops
+    #   nrstops
     nodescoll = make_nodescoll(graphdefs)
     bn = letter2node(bn, nodescoll)
     en = letter2node(en, nodescoll)
@@ -215,7 +238,7 @@ def findroute_extend(bn: str, en: str, graphdefs: list, **kwargs) -> int | str |
 if __name__ == "__main__":
     graphdefs = ["AB5", "BC4", "CD8", "DC8", "DE6", "AD5", "CE2", "EB3", "AE7"]
 
-    if True:
+    if False:
         print("______")
         print("Question 1:")
         bn = "A"  # A
@@ -224,7 +247,7 @@ if __name__ == "__main__":
         kwargs = {"intern": ["B"]}
         findroute(bn, en, graphdefs, *args, **kwargs)
         # xx
-    if True:
+    if False:
         print("______")
         print("Question 2:")
         # Question 2
@@ -265,7 +288,7 @@ if __name__ == "__main__":
         kwargs = {"intern": "E"}
         findroute(bn, en, graphdefs, *args, **kwargs)
 
-    if True:
+    if False:
         print("______")
         print("Question 6:")
         bn = "C"  # C
@@ -275,7 +298,7 @@ if __name__ == "__main__":
         kwargs = {"maxstops": 3}
         findroute_extend(bn, en, graphdefs, **kwargs)
 
-    if True:
+    if False:
         print("______")
         print("Question 7:")
         bn = "A"  # C
@@ -283,7 +306,7 @@ if __name__ == "__main__":
         kwargs = {"nrstops": 4}
         findroute_extend(bn, en, graphdefs, **kwargs)
 
-    if True:
+    if False:
         print("______")
         print("Question 8:")
 
@@ -293,7 +316,7 @@ if __name__ == "__main__":
         args = ["shortest"]
         findroute(bn, en, graphdefs, *args)
 
-    if True:
+    if False:
         print("______")
         print("Question 9:")
         bn = "B"  # B
@@ -301,14 +324,14 @@ if __name__ == "__main__":
         args = ["shortest"]
         findroute(bn, en, graphdefs, *args)
 
-    if True:
+    if False:
         print("Question 10:")
         bn = "C"  # C
         en = "C"  # C
         kwargs = {"maxdist": 30}
         findroute_extend(bn, en, graphdefs, **kwargs)
 
-    if True:
+    if False:
         print("Question 11:")
         bn = "B"  # C
         en = "C"  # C

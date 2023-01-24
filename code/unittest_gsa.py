@@ -12,14 +12,12 @@ class questionMethods(unittest.TestCase):
         en = "C"  # C
         args = ["shortest"]
         kwargs = {"intern": ["B"]}
-        # self.assertEqual(findroute(bn, en, self.graphdefs, *args, **kwargs), 9)
         self.assertEqual(findroute_extend(bn, en, self.graphdefs, *args, **kwargs), 9)
 
     def test_q2(self):
         bn = "A"  # A
         en = "D"  # D
         args = ["shortest"]
-        # self.assertEqual(findroute(bn, en, self.graphdefs, *args), 5)
         self.assertEqual(findroute_extend(bn, en, self.graphdefs, *args), 5)
 
     def test_q3(self):
@@ -48,14 +46,14 @@ class questionMethods(unittest.TestCase):
     def test_q6(self):
         bn = "C"  # C
         en = "C"  # C
-        args = ["shortest"]
+        # args = ["shortest"]
         kwargs = {"maxstops": 3}
         self.assertEqual(findroute_extend(bn, en, self.graphdefs, **kwargs), 2)
 
     def test_q7(self):
         bn = "A"  # C
         en = "C"  # C
-        args = ["shortest"]
+        # args = ["shortest"]
         kwargs = {"nrstops": 4}
         self.assertEqual(findroute_extend(bn, en, self.graphdefs, **kwargs), 3)
 

@@ -48,7 +48,6 @@ class Route:
         # Extend route by adding extra route informatie at end of route attribute
         routeori = self.route
         routeadd = route.route[1:]
-        # self.route.extend(routeadd)
         r1 = Route(routeori + routeadd)
         return r1
 
@@ -108,13 +107,11 @@ class Route:
     def add_toroute(self) -> list:
         # Add edge to last node in route or start alternative route
         # Input:  routes => list of routes
-        #
         altroutes = []
         node = self.route[-1]
-        # tempcopy = copy.deepcopy(routes[i])  # copie to start alternative route
-        for j in range(len(node.edgeout)):
+        for j, edge in enumerate(node.edgeout):
             if j < 1:
-                self.route.append(node.edgeout[j])
+                self.route.append(edge)
             else:
                 # start alternative route
                 tempcopy = [elem for elem in self.route[:-1]]

@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from rf_input import (
     Node,
     Edge,
@@ -15,14 +17,14 @@ class Route:
         # Extend route by adding extra route informatie at end of route attribute
         routeori = self.route
         routeadd = route.route[1:]
-        r1 = Route(routeori + routeadd)
-        return r1
+        routecombined = Route(routeori + routeadd)
+        return routecombined
 
     def return_nrstops(self) -> int:
         # return number of nodes in route.
         count = 0
         for elem in self.route[1:]:
-            if type(elem) == Node:
+            if isinstance(elem, Node):
                 count += 1
         return count
 
@@ -30,21 +32,20 @@ class Route:
         # return total distance of a route
         dist = 0
         for elem in self.route:
-            if type(elem) == Edge:
+            if isinstance(elem, Edge):
                 dist += elem.weight
         return dist
 
     def print_stops(self) -> None:
-        # print name of nodes on screen
+        # print name of nodes in route on screen
         stops = []
         for elem in self.route:
-            if type(elem) == Node:
+            if isinstance(elem, Node):
                 stops.append(elem.name)
         print(stops)
 
     def check_nodereoccurance(self) -> bool:
         # Check if last node in route already exists route
-        # Input: Route-object
         # Output:  Bool, True= last node is passed previous on route
         checknode = self.route[-1]
         result = False
@@ -53,81 +54,52 @@ class Route:
                 result = True
         return result
 
-    def check_nodesorder(self, nodenames: list) -> bool:
+    def check_nodesorder(self, nodeorder: list) -> bool:
         # Check if nodes in route are also present in input
         # input: nodesnames list of strings.
-        if self.return_nrstops() != len(nodenames) - 1:
+        if self.return_nrstops() != len(nodeorder) - 1:
             return False
         i = 0
         for elem in self.route:
-            if type(elem) == Node:
-                if elem.name == nodenames[i]:
+            if isinstance(elem, Node):
+                if elem.name == nodeorder[i].name:
                     i += 1
                 else:
                     return False
-        if i == len(nodenames):
+        if i == len(nodeorder):
             return True
         else:
             return False
-        # return result
-
-    def add_toroute(self) -> list:
-        # Add edge to last node in route or start alternative route
-        # Input:  routes => list of routes
-        altroutes = []
-        node = self.route[-1]
-        for j, edge in enumerate(node.edgeout):
-            if j < 1:
-                self.route.append(edge)
-            else:
-                # start alternative route
-                tempcopy = [elem for elem in self.route[:-1]]
-                altroutes.append(tempcopy)
-
-                altroutes[-1].append(node.edgeout[j])
-        return altroutes
 
 
 class Rfinder:
+    # Several functions for answering questions about routes
     def __init__(self, graphdefs: list):
-        # MAIN FUNCTION2
-        # args
         # graphdefs: list
         self.nodescoll = Nodescoll(graphdefs)
         self.routes_d = None
         self.routes_e = None
 
-        # nodescoll, nodeorder, bn, en = init_findroute_extend(graphdefs, bn, en, args)
-        # self.nodescoll = nodescoll
-
-    def clean_routes(self):
+    def _clean_routes(self):
         self.routes_d = None
         self.routes_e = None
 
-    # def _init_findroute_extend(self, bn: str, en: str, args=[]):  ##kwargs: dict):
     def _init_findroute_extend(self, nodeorder: list):
+        self.routes_d = routing(nodeorder, self.nodescoll)
+        en = nodeorder[-1]
+        nodeorder_ext = [en, en]
+        self.routes_e = routing(nodeorder_ext, self.nodescoll)
 
-        bn = self.nodescoll.letter2node(nodeorder[0])
-        en = self.nodescoll.letter2node(nodeorder[-1])
-
-        routes_d = routing(bn, en, self.nodescoll)
-        if len(nodeorder) > 2:
-            self.routes_d = findcorrectroutes(routes_d, nodeorder)
-        else:
-            self.routes_d = routes_d
-
-        self.routes_e = routing(en, en, self.nodescoll)
-
-    def return_nosuchroute(self) -> str:
+    def _return_nosuchroute(self) -> str:
         output = "No Such Route"
-        self.clean_routes()
-        print("No Such Route")
+        self._clean_routes()
+        # print("No Such Route")
         return output
 
     def return_shortestdistance(self, nodeorder: list) -> float:
         self._init_findroute_extend(nodeorder)
         if len(self.routes_d) == 0:
-            output = self.return_nosuchroute()
+            output = self._return_nosuchroute()
         else:
             distance = 999
             for route in self.routes_d:
@@ -136,11 +108,10 @@ class Rfinder:
             output = distance
         return output
 
-    # def count_routesmaxstop(routes_d: list, routes_e: list, maxstops: int) -> int:
     def return_countmaxstops(self, nodeorder: list, maxstops: int) -> int:
         self._init_findroute_extend(nodeorder)
         if len(self.routes_d) == 0:
-            output = self.return_nosuchroute()
+            output = self._return_nosuchroute()
         else:
             output = 0
             for route1 in self.routes_d:
@@ -153,11 +124,10 @@ class Rfinder:
                         output += 1
         return output
 
-    # def count_routesnrstop(routes_d: list, routes_e: list, nrstops: int) -> int:
     def return_countnrstops(self, nodeorder: list, nrstops: int) -> int:
         self._init_findroute_extend(nodeorder)
         if len(self.routes_d) == 0:
-            output = self.return_nosuchroute()
+            output = self._return_nosuchroute()
         else:
             output = 0
             for route1 in self.routes_d:
@@ -193,19 +163,19 @@ class Rfinder:
         return output
 
 
-def routing(beginnode: Node, endnode: Node, nodescoll: Nodescoll, maxroutes=20) -> list:
-    # Make possible and impossible routes based on beginnode, endnode and collection of nodes
+def routing(nodeorder, nodescoll: Nodescoll, maxroutes=20) -> list:
+    # Create possible routes based on beginnode, endnode out of collection of nodes-objects
     # Input:
-    #   beginnode: beginning node (Node-object)
-    #   endnode: endnode           (Node-object)
-    #   nodes: collection of nodes. list of nodes
+    #   nodeorder: order of stops in route)
+    #   nodescoll: collection of nodes. list of nodes
 
     # Output:
     # routes list of lists
     #   routes[x]= routes[x][0] =>list nodes-edge;
     #   routes[x][1] => False= route continues; True = routes ends
 
-    def addnode2route(route: Route) -> (Route, Node):
+    def addnode2route(route: Route) -> Tuple[Route, Node]:
+        # add node to last edge in route and return
         node = route.route[-1].find_connectednode(nodes, "in")
         route.route.append(node)
         return route, node
@@ -213,23 +183,50 @@ def routing(beginnode: Node, endnode: Node, nodescoll: Nodescoll, maxroutes=20) 
     def check_endroute(node: Node, endnode: Node) -> bool:
         return node.name == endnode.name
 
+    def add_toroute(route: Route) -> Tuple[Route, list]:
+        # Add edge to last node in route or start alternative route
+        # Output: altered route and alternative routes.
+        altroutes = []
+        node = route.route[-1]
+        route.route.append(node.edgeout[0])
+        for edge in node.edgeout[1:]:
+            tempcopy = [elem for elem in route.route[:-1]]
+            altroutes.append(tempcopy)
+            altroutes[-1].append(edge)
+        return route, altroutes
+
+    def findcorrectroutes(routesin: list, nodeorder: list) -> list:
+        # filter routes in list that contain correct order of stops.
+        # input:    routesin => list of Route-objects
+        #           nodeorder => list of Nodes-objects.
+        # output:
+        #           list of Routes
+        routesout = []
+        for route in routesin:
+            res = route.check_nodesorder(nodeorder)
+            if res:
+                routesout.append(route)
+        return routesout
+
+    beginnode = nodeorder[0]
+    endnode = nodeorder[-1]
+
     nodes = nodescoll.return_nodes()
     # initiate routes
     routes = []
     routes.append(Route([beginnode]))
-
-    i = 0  # Route teller
-    while i <= len(routes) - 1:
+    i = 0
+    while i <= len(routes) - 1 or i == maxroutes:
 
         route = routes[i]
-        if type(route.route[-1]) is Edge:
+        if isinstance(route.route[-1], Edge):
             route, node = addnode2route(route)
             if check_endroute(node, endnode):
                 route.end = True  # end of route at destination
                 i += 1
                 continue
 
-        altroutes = route.add_toroute()
+        route, altroutes = add_toroute(route)
         routes.extend([Route(ro) for ro in altroutes])
         route, node = addnode2route(route)
 
@@ -240,146 +237,7 @@ def routing(beginnode: Node, endnode: Node, nodescoll: Nodescoll, maxroutes=20) 
             route.end = True  # end of route at destination
             i += 1
 
-        if len(routes) == i or i == maxroutes:
-            print(i)
-            break
+    if len(nodeorder) > 2:
+        routes = findcorrectroutes(routes, nodeorder)
+
     return routes
-
-
-def findcorrectroutes(routesin: list, nodeorder: list) -> list:
-    # filter routes in list that contain correct order of nodes.
-    # input:    routesin => list of Route-objects
-    #           nodeorder => list of Nodes-objects.
-    # output:
-    #           list of Routes
-    routesout = []
-    for route in routesin:
-        res = route.check_nodesorder(nodeorder)
-        if res:
-            routesout.append(route)
-    return routesout
-
-
-if __name__ == "__main__":
-    graphdefs = ["AB5", "BC4", "CD8", "DC8", "DE6", "AD5", "CE2", "EB3", "AE7"]
-
-    if True:
-        print("______")
-        print("Question 1:")
-        bn = "A"  # A
-        en = "C"  # C
-        kwargs = {"intern": ["B"]}
-        args = ["shortest"]
-        init_findroute_extend
-        Rfinder()
-
-        findroute_extend(bn, en, graphdefs, *args, **kwargs)
-        xx
-    if True:
-        print("______")
-        print("Question 2:")
-        # Question 2
-
-        bn = "A"  # A
-        en = "D"  # D
-
-        args = ["shortest"]
-        findroute_extend(bn, en, graphdefs, *args)
-
-    if True:
-        print("______")
-        print("Question 3:")
-        # Question 3
-        bn = "A"  # A
-        en = "C"  # C
-        args = ["shortest"]
-        kwargs = {"intern": "D"}
-        findroute_extend(bn, en, graphdefs, *args, **kwargs)
-
-    if True:
-        print("______")
-        print("Question 4:")
-        # Question 4
-        bn = "A"  # A
-        en = "D"  # C
-
-        args = ["shortest"]
-        kwargs = {"intern": ["E", "B", "C"]}
-        findroute_extend(bn, en, graphdefs, *args, **kwargs)
-
-    if True:
-        print("______")
-        print("Question 5:")
-        # Question 5
-        bn = "A"  # A
-        en = "D"  # D
-        args = ["shortest"]
-        kwargs = {"intern": "E"}
-        findroute_extend(bn, en, graphdefs, *args, **kwargs)
-
-    if False:
-        print("______")
-        print("Question 6:")
-        bn = "C"  # C
-        en = "C"  # C
-
-        args = ["shortest"]
-        kwargs = {"maxstops": 3}
-        findroute_extend(bn, en, graphdefs, **kwargs)
-
-    if False:
-        print("______")
-        print("Question 7:")
-        bn = "A"  # C
-        en = "C"  # C
-        kwargs = {"nrstops": 4}
-        findroute_extend(bn, en, graphdefs, **kwargs)
-
-    if False:
-        print("______")
-        print("Question 8:")
-
-        bn = "A"  # A
-        en = "C"  # C
-
-        args = ["shortest"]
-        findroute_extend(bn, en, graphdefs, *args)
-
-    if False:
-        print("______")
-        print("Question 9:")
-        bn = "B"  # B
-        en = "B"  # B
-        args = ["shortest"]
-        findroute_extend(bn, en, graphdefs, *args)
-
-    if False:
-        print("Question 10:")
-        bn = "C"  # C
-        en = "C"  # C
-        kwargs = {"maxdist": 30}
-        findroute_extend(bn, en, graphdefs, **kwargs)
-
-    if False:
-        print("Question 11:")
-        bn = "B"  # C
-        en = "C"  # C
-        kwargs = {"maxdist": 70}
-        findroute_extend(bn, en, graphdefs, **kwargs)
-
-    if False:
-        print("______")
-        print("Question 12:")
-        bn = "A"  # C
-        en = "C"  # C
-        kwargs = {"nrstops": 6}
-        findroute_extend(bn, en, graphdefs, **kwargs)
-
-    if False:
-        graphdefs.extend(["FG2"])
-        bn = "C"  # C
-        en = "G"  # C
-        args = ["shortest"]
-        findroute_extend(bn, en, graphdefs, *args)
-        kwargs = {"maxdist": 30}
-        findroute_extend(bn, en, graphdefs, **kwargs)

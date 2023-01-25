@@ -1,7 +1,3 @@
-# import copy
-# import pprint as pp
-
-
 class Edge:
     def __init__(self, name: str, weight: int):
         self.name = name
@@ -43,9 +39,6 @@ class Nodescoll:
     def __init__(self, graphdefs: list):
         self.nodescoll = self._make_nodescoll(graphdefs)
 
-    def return_nodes(self):
-        return self.nodescoll
-
     def _make_nodescoll(self, graphdefs: list) -> list:
         # make colllection (list) of Node-objects
         # input: graphdefs=> list of strings containing 3 characters. example: 'AB4'
@@ -69,12 +62,15 @@ class Nodescoll:
         for temp in graphdefs:
             dump = decode_edge(temp)
             e_1 = Edge(dump[0] + dump[1], dump[2])
-            for i, no in enumerate(nodescoll):
+            for no in nodescoll:
                 if no.name == dump[0]:
                     no.add_edgeout(e_1)
                 elif no.name == dump[1]:
                     no.add_edgein(e_1)
         return nodescoll
+
+    def return_nodes(self):
+        return self.nodescoll
 
     def letter2node(self, letter: str) -> Node:
         # Return Node- object from a list of Node objects by letter
@@ -83,23 +79,22 @@ class Nodescoll:
         # output: Nodeobject
         nodeobj = None
         i = 0
-        while nodeobj == None:
+        while nodeobj is None:
             if letter == self.nodescoll[i].name:
                 nodeobj = self.nodescoll[i]
             i += 1
         return nodeobj
 
 
-def make_nodeorder(bn: str, en: str, args=None) -> list:
-    # make list of strings representing nodes
-    # kwargs: 'intern': list of points
+def make_nodeorder(bn: str, en: str, nodescoll, args=None) -> list:
+    # make list of nodeobjects representing stops in route
 
-    nodeorder = [bn]
+    nodeorder = [nodescoll.letter2node(bn)]
     # if len(args) != 0:
-    if args != None:
+    if args is not None:
         for nn in args:
-            nodeorder.append(nn)
-    nodeorder.append(en)
+            nodeorder.append(nodescoll.letter2node(nn))
+    nodeorder.append(nodescoll.letter2node(en))
     return nodeorder
 
 

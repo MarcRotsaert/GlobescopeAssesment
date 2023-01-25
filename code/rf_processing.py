@@ -90,17 +90,20 @@ class Rfinder:
         nodeorder_ext = [en, en]
         self.routes_e = routing(nodeorder_ext, self.nodescoll)
 
-    def _return_nosuchroute(self) -> str:
-        output = "No Such Route"
-        self._clean_routes()
-        # print("No Such Route")
+    def _nosuchroute(self, count) -> str:
+        if count == 0:
+            output = "No Such Route"
+            self._clean_routes()
+            # print("No Such Route")
+        else:
+            output = count
         return output
 
     def return_shortestdistance(self, nodeorder: list) -> float:
+        # return distance of shortest route in nodeorder
         self._init_findroute_extend(nodeorder)
-        if len(self.routes_d) == 0:
-            output = self._return_nosuchroute()
-        else:
+        output = self._nosuchroute(len(self.routes_d))
+        if output != "No Such Route":
             distance = 999
             for route in self.routes_d:
                 temp = route.return_totdistance()
@@ -109,43 +112,46 @@ class Rfinder:
         return output
 
     def return_countmaxstops(self, nodeorder: list, maxstops: int) -> int:
+        # return number of routes wich equals or less than maxstops in nodeorder
         self._init_findroute_extend(nodeorder)
-        if len(self.routes_d) == 0:
-            output = self._return_nosuchroute()
-        else:
-            output = 0
-            for route1 in self.routes_d:
-                nrstop1 = route1.return_nrstops()
-                if nrstop1 < maxstops + 1:
-                    output += 1
-                for route2 in self.routes_e:
-                    nrstop12 = nrstop1 + route2.return_nrstops()
-                    if nrstop12 < maxstops + 1:
-                        output += 1
+        count = 0
+        for route1 in self.routes_d:
+            nrstop1 = route1.return_nrstops()
+            if nrstop1 < maxstops + 1:
+                count += 1
+            for route2 in self.routes_e:
+                nrstop12 = nrstop1 + route2.return_nrstops()
+                if nrstop12 < maxstops + 1:
+                    count += 1
+
+        output = self._nosuchroute(count)
         return output
 
     def return_countnrstops(self, nodeorder: list, nrstops: int) -> int:
+        # return number of routes that equals number of stops in nrstops in nodeorder
         self._init_findroute_extend(nodeorder)
-        if len(self.routes_d) == 0:
-            output = self._return_nosuchroute()
-        else:
-            output = 0
-            for route1 in self.routes_d:
-                nrstop1 = route1.return_nrstops()
-                if nrstop1 == nrstops:
-                    output += 1
-                for route2 in self.routes_e:
-                    nrstop12 = nrstop1 + route2.return_nrstops()
-                    if nrstop12 == nrstops:
-                        output += 1
-            return output
+        count = 0
+        for route1 in self.routes_d:
+            nrstop1 = route1.return_nrstops()
+            if nrstop1 == nrstops:
+                count += 1
+            for route2 in self.routes_e:
+                nrstop12 = nrstop1 + route2.return_nrstops()
+                if nrstop12 == nrstops:
+                    count += 1
+        output = self._nosuchroute(count)
+        return output
 
     def return_countmaxdist(self, nodeorder: list, maxdist: float) -> float:
+        # return number of routes with distance less than maxdist in nodeorder
         self._init_findroute_extend(nodeorder)
+
         route_u = []
         for route in self.routes_d:
             if route.return_totdistance() < maxdist:
                 route_u.append(route)
+
+        # res = self._subfunct(route_u, "return_totdistance", "<", maxdist)
 
         x1 = 0
         x2 = len(route_u)
@@ -159,7 +165,9 @@ class Rfinder:
                         k += 1
             x1 = x2
             x2 = x1 + k
-        output = len(route_u)
+
+        count = len(route_u)
+        output = self._nosuchroute(count)
         return output
 
 
@@ -170,7 +178,7 @@ def routing(nodeorder, nodescoll: Nodescoll, maxroutes=20) -> list:
     #   nodescoll: collection of nodes. list of nodes
 
     # Output:
-    # routes list of lists
+    # routes list of Route-objects
     #   routes[x]= routes[x][0] =>list nodes-edge;
     #   routes[x][1] => False= route continues; True = routes ends
 

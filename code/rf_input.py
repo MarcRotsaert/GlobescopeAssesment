@@ -39,6 +39,14 @@ class Nodescoll:
     def __init__(self, graphdefs: list):
         self.nodescoll = self._make_nodescoll(graphdefs)
 
+    def return_nodebyletter(self, letter):
+        nodeobj = None
+        for node in self.nodescoll:
+            if node.name == letter:
+                nodeobj = node
+                break
+        return nodeobj
+
     def _make_nodescoll(self, graphdefs: list) -> list:
         # make colllection (list) of Node-objects
         # input: graphdefs=> list of strings containing 3 characters. example: 'AB4'
@@ -72,29 +80,23 @@ class Nodescoll:
     def return_nodes(self):
         return self.nodescoll
 
-    def letter2node(self, letter: str) -> Node:
-        # Return Node- object from a list of Node objects by letter
-        # input: letter => letter from alphabet, str.
-        #       nodescoll: list of nodeobjects
-        # output: Nodeobject
-        nodeobj = None
-        i = 0
-        while nodeobj is None:
-            if letter == self.nodescoll[i].name:
-                nodeobj = self.nodescoll[i]
-            i += 1
-        return nodeobj
+
+def letter2node(letter: str, nodescoll: Nodescoll) -> Node:
+    # Return Node- object from a nodescoll object by letter
+    # input: letter => letter from alphabet, str.
+    #       nodescoll: list of nodeobjects
+    nodeobj = nodescoll.return_nodebyletter(letter)
+    return nodeobj
 
 
-def make_nodeorder(bn: str, en: str, nodescoll, args=None) -> list:
+def make_nodeorder(bn: str, en: str, nodescoll: Nodescoll, intern=None) -> list:
     # make list of nodeobjects representing stops in route
-
-    nodeorder = [nodescoll.letter2node(bn)]
+    nodeorder = [letter2node(bn, nodescoll)]
     # if len(args) != 0:
-    if args is not None:
-        for nn in args:
-            nodeorder.append(nodescoll.letter2node(nn))
-    nodeorder.append(nodescoll.letter2node(en))
+    if intern is not None:
+        for nn in intern:
+            nodeorder.append(letter2node(nn, nodescoll))
+    nodeorder.append(letter2node(en, nodescoll))
     return nodeorder
 
 

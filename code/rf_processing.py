@@ -151,8 +151,6 @@ class Rfinder:
             if route.return_totdistance() < maxdist:
                 route_u.append(route)
 
-        # res = self._subfunct(route_u, "return_totdistance", "<", maxdist)
-
         x1 = 0
         x2 = len(route_u)
         while x2 > x1:
@@ -171,7 +169,7 @@ class Rfinder:
         return output
 
 
-def routing(nodeorder, nodescoll: Nodescoll, maxroutes=20) -> list:
+def routing(nodeorder: list, nodescoll: Nodescoll, maxroutes=20) -> list:
     # Create possible routes based on beginnode, endnode out of collection of nodes-objects
     # Input:
     #   nodeorder: order of stops in route)

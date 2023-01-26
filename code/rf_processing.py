@@ -75,7 +75,6 @@ class Route:
 class Rfinder:
     # Several functions for answering questions about routes
     def __init__(self, graphdefs: list):
-        # graphdefs: list
         self.nodescoll = Nodescoll(graphdefs)
         self.routes_d = None
         self.routes_e = None
@@ -221,6 +220,7 @@ def routing(nodeorder: list, nodescoll: Nodescoll, maxroutes=20) -> list:
     # initiate routes
     routes = []
     routes.append(Route([beginnode]))
+
     i = 0
     while i <= len(routes) - 1 or i == maxroutes:
 

@@ -13,38 +13,61 @@ def __init(
 
 
 def print_distance_shortestroute(
-    beginnode: str, endnode: str, connections: list, stopover=[]
+    # Print distance shortest route between beginnode and endnode begin
+    # eventually with stopovers
+    beginnode: str,
+    endnode: str,
+    connections: list,
+    stopover=None,
 ):
     rf, nodeorder = __init(beginnode, endnode, connections, stopover)
     print(rf.return_shortestdistance(nodeorder))
 
 
 def print_countmaxstops(
-    beginnode: str, endnode: str, connections: list, nrmaxstops: int, stopover=[]
+    # Print number of routes between beginnode and endnode begin, with less than x stops
+    # eventually with stopovers
+    beginnode: str,
+    endnode: str,
+    connections: list,
+    nrmaxstops: int,
+    stopover=None,
 ):
     rf, nodeorder = __init(beginnode, endnode, connections, stopover)
     print(rf.return_countmaxstops(nodeorder, nrmaxstops))
 
 
 def print_countnrstops(
-    beginnode: str, endnode: str, connections: list, nrstops: int, stopover=[]
+    # Print number of routes between beginnode and endnode begin, that equals  x stops
+    # eventually with stopovers
+    beginnode: str,
+    endnode: str,
+    connections: list,
+    nrstops: int,
+    stopover=None,
 ):
     rf, nodeorder = __init(beginnode, endnode, connections, stopover)
     print(rf.return_countnrstops(nodeorder, nrstops))
 
 
 def print_countmaxdist(
-    beginnode: str, endnode: str, connections: list, maxdist: float, stopover=[]
+    # Print number of routes between beginnode and endnode begin,with maximum distance of x
+    # eventually with stopovers
+    beginnode: str,
+    endnode: str,
+    connections: list,
+    maxdist: float,
+    stopover=None,
 ):
     rf, nodeorder = __init(beginnode, endnode, connections, stopover)
     print(rf.return_countmaxdist(nodeorder, maxdist))
 
 
 if __name__ == "__main__":
-    connections = ["AB5", "BC4", "CD8", "DC8", "DE6", "AD5", "CE2", "EB3", "AE7"]
-    print_distance_shortestroute("A", "C", connections)
-    print_distance_shortestroute("A", "C", connections, ["B"])
-    print_distance_shortestroute("A", "D", connections, "E")
-    print_countmaxstops("C", "C", connections, 3)
-    print_countnrstops("A", "C", connections, 4)
-    print_countmaxdist("C", "C", connections, 30)
+    graphfdefs = ["AB5", "BC4", "CD8", "DC8", "DE6", "AD5", "CE2", "EB3", "AE7"]
+    print_distance_shortestroute("A", "C", graphfdefs, None)
+    print_distance_shortestroute("A", "C", graphfdefs, ["B"])
+    print_distance_shortestroute("A", "D", graphfdefs, "E")
+    print_countmaxstops("C", "C", graphfdefs, 3)
+    print_countnrstops("A", "C", graphfdefs, 4)
+    print_countmaxdist("C", "C", graphfdefs, 30)

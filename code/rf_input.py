@@ -7,14 +7,16 @@ class Edge:
         # search node-object, connected to this Edge-object
         # input: nodes  list of Node objects
         # inout: "in" or "out"
+        noderes = None
         for no in nodes:
             if inout == "in":
-                for ed in no.edgein:
-                    # print(ed.name)
-                    if ed.name == self.name:
-                        noderes = no
-            if inout == "out":
-                pass  # not yet implemented
+                edges = no.edgein
+            elif inout == "out":
+                edges = no.edgein
+            for ed in edges:
+                # print(ed.name)
+                if ed.name == self.name:
+                    noderes = no
         return noderes
 
 

@@ -129,9 +129,10 @@ dmypy.json
 .vscode/launch.json
 .idea
 
-
 *.gz
 *.zip
 *.json
 *.jpg
-
+*.png
+*.pptx
+old/

@@ -5,39 +5,32 @@ Onderdelen van het programma zijn aan te roepen via een IDE of via een shell
 
 _________________
 SHELL
-Scripts starten via shell 
-Beantwoorden 10 vragen assesment en extra vragen
-	python main3.py of python3 main3.py
-Unit Testen 
-	python gsa_unittest.py of python3 gsa_unittest.py
+Direct te starten  
+	- Programma
+		"python main4.py" of "python3 main4.py"
+	- Unit Testen 
+		"python gsa_unittest4.py" of "python3 gsa_unittest4.py"
 
 _____________________
-IDE
-Met de functies "findroute" en "findroute_extend" in bestand main3.py kunnen de 10 vragen uit het assesment opgelost worden.
-En kan met andere input parameters andere vragen beantwoord worden. 
 
-findroute:
-	functie voor beantwoorden vragen over route, waarbij de route niet verder gaat dan eindpunt	
-findroute_extend: 
-	functie voor beantwoorden vragen over route, waarbij de route na bereiken eindpunt verder kan lopen. 
+Het bestand main4.py is bedoeld om een programma in uit te werken
+Een aantal functies zijn uitgewerkt en dit bestand is aan te roepen als een script. 
+De functies zijn als voorbeeld bedoeld, dus dit is aanpasbaar afhankelijk van de vraag. 
 
-Input voor functies:
-findroute(bn,en,edgedefs,*args,**kwargs)	
-	bn: letter beginpunt route, str, bijvoorbeeld 'A'
-	en: letter eindpunt route, str, bijvoorbeeld 'B'
-	edgedefs: definitie van edges, list van strings, bijvoorbeeld ['AB4','BC2'] 
 
-Je kan je vraag specifieker maken via een *args of **kwargs
-
-findroute
-args:
-	'shortest' 		bepaal afstand kortste route tussen begin en eind punt
-kwargs
-	intern=[list]	tussenpunten, bijvoorbeeld "A", of ["A", B"]
-
-findroute_extend
-kwargs: 
+Uitleg bij de invoerparameters functies main4:
+	beginnode		beginpunt van een route: bijvoorbeeld beginnode ="A"
+	eindnode		eindpunt van een route: bijvoorbeeld eindnode ="A"
+	connections 	list met verbindingen connections =["AB5", "BC4", "CD8" ]
+					"AB5": staat voor een verbinding A naar B met een lengte 5
+					"BC5": staat voor een verbinding B naar C met een lengte 5
+					"CD5": staat voor een verbinding C naar D met een lengte 8					
+	stopover=[list]	punten tussen begin punt en eindpunt, bijvoorbeeld "A", of ["A", B"]
+	
+	
 	maxdist=20		bepaal aantal routes met maximale afstand=20
 	nrstops=4 		bepaal aantal routes met 4 stops.
 	maxstops=3		bepaal aantal routes met maximaal 3 stops
-	intern=[list]	tussenpunten, bijvoorbeeld "A", of ["A", B"]
+	
+main4.py importeert modules rf_input en rf_processing. 
+
